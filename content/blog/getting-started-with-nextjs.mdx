@@ -1,0 +1,113 @@
+---
+title: "Getting Started with Next.js 14"
+date: "2025-01-15"
+excerpt: "A comprehensive guide to building modern web applications with Next.js App Router, Server Components, and all the latest features."
+tags: ["Next.js", "React", "Tutorial"]
+---
+
+## Introduction
+
+Next.js has become the go-to framework for building modern React applications. With the introduction of the App Router in version 13 and continued improvements in version 14, it's more powerful than ever.
+
+In this guide, we'll walk through setting up a new Next.js project and explore its key features that make it stand out from other frameworks.
+
+## Prerequisites
+
+Before we begin, make sure you have:
+
+- Node.js 18.17 or later installed
+- Basic knowledge of React and JavaScript/TypeScript
+- A code editor (VS Code recommended)
+
+## Installation
+
+Creating a new Next.js project is straightforward. Open your terminal and run:
+
+```bash
+npx create-next-app@latest my-app
+```
+
+The CLI will guide you through the setup process, asking about TypeScript, ESLint, Tailwind CSS, and other options.
+
+## Project Structure
+
+Next.js 14 uses a file-based routing system with the App Router. Here's what a typical project looks like:
+
+### App Router
+
+The `app` directory is where all your routes live. Each folder represents a route segment, and special files like `page.tsx`, `layout.tsx`, and `loading.tsx` define the UI for that route.
+
+```
+app/
+├── layout.tsx      # Root layout
+├── page.tsx        # Home page (/)
+├── about/
+│   └── page.tsx    # About page (/about)
+└── blog/
+    ├── page.tsx    # Blog listing (/blog)
+    └── [slug]/
+        └── page.tsx # Dynamic blog post (/blog/my-post)
+```
+
+### Server Components
+
+By default, all components in the App Router are React Server Components. This means they render on the server and send HTML to the client, resulting in faster initial loads and better SEO.
+
+```tsx
+// This is a Server Component by default
+export default async function Page() {
+  const data = await fetch('https://api.example.com/data');
+  return <div>{data}</div>;
+}
+```
+
+## Building Your First Page
+
+Let's create a simple page. In the `app` directory, create a new file `about/page.tsx`:
+
+```tsx
+export default function AboutPage() {
+  return (
+    <div>
+      <h1>About Us</h1>
+      <p>Welcome to our website!</p>
+    </div>
+  );
+}
+```
+
+That's it! Navigate to `/about` and you'll see your new page.
+
+## Styling
+
+Next.js supports various styling options out of the box:
+
+- **CSS Modules** for component-scoped styles
+- **Tailwind CSS** for utility-first styling
+- **CSS-in-JS** libraries like styled-components
+- **Global CSS** for application-wide styles
+
+Here's an example using CSS Modules:
+
+```tsx
+import styles from './page.module.css';
+
+export default function Page() {
+  return <h1 className={styles.title}>Hello World</h1>;
+}
+```
+
+## Deployment
+
+The easiest way to deploy your Next.js app is with Vercel, the company behind Next.js. Simply connect your GitHub repository and Vercel will automatically deploy your app with zero configuration.
+
+```bash
+npm i -g vercel
+vercel
+```
+
+## Conclusion
+
+Next.js 14 brings together the best of React with powerful features like the App Router, Server Components, and seamless deployment. Whether you're building a simple blog or a complex web application, Next.js provides the tools you need to succeed.
+
+Happy coding!
