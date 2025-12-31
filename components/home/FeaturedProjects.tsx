@@ -32,7 +32,7 @@ const projects = [
 
 export default function FeaturedProjects() {
   return (
-    <section className="py-24">
+    <section className="py-16">
       <div className="max-w-5xl mx-auto px-6">
         <FadeIn>
           <div className="flex items-center justify-between mb-12">

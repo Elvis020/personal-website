@@ -11,7 +11,7 @@ export default function BlogPage() {
   const posts = getAllPostsMeta();
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-24">
+    <div className="max-w-5xl mx-auto px-6 pt-12 pb-8">
       {/* Header */}
       <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-6">
         Blog

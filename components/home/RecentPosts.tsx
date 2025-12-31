@@ -40,7 +40,7 @@ function formatDate(dateString: string) {
 
 export default function RecentPosts() {
   return (
-    <section className="py-24 border-t border-[var(--border)]">
+    <section className="py-16 border-t border-[var(--border)]">
       <div className="max-w-5xl mx-auto px-6">
         <FadeIn>
           <div className="flex items-center justify-between mb-12">

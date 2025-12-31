@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
@@ -35,6 +35,11 @@ export const metadata: Metadata = {
   },
 };
 
+// Enable safe area insets for notched devices
+export const viewport = {
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,7 +55,7 @@ export default function RootLayout({
           <ParticleWrapper />
           <RotatingCursor />
           <Header />
-          <main className="min-h-screen pt-16 md:pt-0">
+          <main className="min-h-screen mobile-safe-top md:pt-0">
             {children}
           </main>
           <Footer />

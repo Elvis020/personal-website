@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { usePathname } from "next/navigation";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
@@ -68,6 +68,9 @@ export default function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // Scroll progress for mobile - direct tracking without spring animation
+  const { scrollYProgress } = useScroll();
+
   // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -105,6 +108,7 @@ export default function Header() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[var(--bg-primary)]/80 backdrop-blur-xl border-b border-[var(--border)]"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
         <nav className="px-6 py-4 flex items-center justify-between">
           <Link href="/" className="z-50">
@@ -126,6 +130,13 @@ export default function Header() {
             </button>
           </div>
         </nav>
+
+        {/* Scroll Progress Bar - positioned at bottom of header */}
+        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--border)]" />
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--text-primary)] origin-left"
+          style={{ scaleX: scrollYProgress }}
+        />
       </motion.header>
 
       {/* Mobile Menu Overlay */}

@@ -75,23 +75,53 @@ body {
   color: var(--bg-primary);
 }
 
-/* Scrollbar - Minimal Dark */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* Scrollbar - Minimal Dark (desktop only) */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+/* Hide scrollbar on mobile */
+@media (max-width: 767px) {
+  html,
+  body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
+/* Hide scrollbar on tables (all screen sizes) */
+table,
+.table-wrapper,
+[class*="overflow-x"] {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+table::-webkit-scrollbar,
+.table-wrapper::-webkit-scrollbar,
+[class*="overflow-x"]::-webkit-scrollbar {
+  display: none;
 }
 
 /* Hide scrollbar utility class */
@@ -182,5 +212,19 @@ body::before {
 .animate-marquee:hover,
 .animate-marquee-reverse:hover {
   animation-play-state: paused;
+}
+
+/* Mobile safe area support for notched devices */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .mobile-safe-top {
+    /* Header height (4rem/64px) + safe area inset */
+    padding-top: calc(env(safe-area-inset-top) + 4rem);
+  }
+
+  @media (min-width: 768px) {
+    .mobile-safe-top {
+      padding-top: 0;
+    }
+  }
 }
 
