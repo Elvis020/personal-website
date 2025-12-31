@@ -50,7 +50,7 @@ export default function RootLayout({
           <ParticleWrapper />
           <RotatingCursor />
           <Header />
-          <main className="min-h-screen pt-16">
+          <main className="min-h-screen pt-16 md:pt-0">
             {children}
           </main>
           <Footer />

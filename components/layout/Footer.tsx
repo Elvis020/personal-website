@@ -45,16 +45,6 @@ export default function Footer() {
               </motion.a>
             ))}
           </div>
-
-          {/* Right side */}
-          <div className="text-sm text-[var(--text-muted)]">
-            <Link
-              href="/colophon"
-              className="hover:text-[var(--text-secondary)] transition-colors duration-200"
-            >
-              Built with Next.js
-            </Link>
-          </div>
         </div>
       </div>
     </motion.footer>

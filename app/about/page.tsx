@@ -1,15 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import FadeIn from "@/components/animations/FadeIn";
 import StaggerChildren, { StaggerItem } from "@/components/animations/StaggerChildren";
-
-const skills = [
-  { category: "Languages", items: ["TypeScript", "JavaScript", "Python", "Go"] },
-  { category: "Frontend", items: ["React", "Next.js", "Tailwind CSS", "Framer Motion"] },
-  { category: "Backend", items: ["Node.js", "PostgreSQL", "Redis", "GraphQL"] },
-  { category: "Tools", items: ["Git", "Docker", "AWS", "Vercel"] },
-];
 
 const experience = [
   {
@@ -24,7 +19,269 @@ const experience = [
     period: "2021 - 2023",
     description: "Full-stack development with focus on React and Node.js ecosystems.",
   },
+  {
+    role: "Junior Developer",
+    company: "First Company",
+    period: "2019 - 2021",
+    description: "Started my journey building web applications and learning best practices.",
+  },
 ];
+
+const currently = {
+  reading: "Designing Data-Intensive Applications",
+};
+
+const skillsRow1 = ["TypeScript", "JavaScript", "React", "Next.js", "Node.js", "Python", "Go", "GraphQL"];
+const skillsRow2 = ["Tailwind CSS", "Framer Motion", "PostgreSQL", "Redis", "Docker", "AWS", "Vercel", "Git"];
+
+interface SpotifyData {
+  isPlaying: boolean;
+  title: string | null;
+  artist?: string;
+  album?: string;
+  albumImageUrl?: string;
+  songUrl?: string;
+}
+
+// Spotify Now Playing Component
+function SpotifyNowPlaying() {
+  const [data, setData] = useState<SpotifyData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSpotify() {
+      try {
+        const res = await fetch("/api/spotify");
+        if (res.ok) {
+          const json = await res.json();
+          setData(json);
+        }
+      } catch (error) {
+        console.error("Failed to fetch Spotify data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchSpotify();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchSpotify, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
+    return (
+      <motion.div
+        className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] animate-pulse" />
+          <div className="flex-1">
+            <div className="h-3 w-16 bg-[var(--bg-tertiary)] rounded animate-pulse mb-2" />
+            <div className="h-4 w-32 bg-[var(--bg-tertiary)] rounded animate-pulse" />
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Fallback if no Spotify data or not configured
+  if (!data || !data.title) {
+    return (
+      <motion.div
+        className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
+        whileHover={{ scale: 1.02, borderColor: "var(--text-muted)" }}
+        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+      >
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-lg">
+            🎧
+          </div>
+          <div>
+            <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1">
+              Listening
+            </p>
+            <p className="text-[var(--text-primary)] font-medium">Not playing</p>
+          </div>
+        </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.a
+      href={data.songUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
+      whileHover={{ scale: 1.02, borderColor: "var(--text-muted)" }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
+    >
+      <div className="flex items-start gap-4">
+        {data.albumImageUrl ? (
+          <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
+            <Image
+              src={data.albumImageUrl}
+              alt={data.album || "Album art"}
+              fill
+              className="object-cover"
+            />
+            {data.isPlaying && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                <div className="flex gap-0.5 items-end h-3">
+                  <span className="w-0.5 bg-green-500 animate-bounce" style={{ height: '8px', animationDelay: '0ms' }} />
+                  <span className="w-0.5 bg-green-500 animate-bounce" style={{ height: '12px', animationDelay: '150ms' }} />
+                  <span className="w-0.5 bg-green-500 animate-bounce" style={{ height: '6px', animationDelay: '300ms' }} />
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="w-12 h-12 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-lg flex-shrink-0">
+            🎧
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1 flex items-center gap-2">
+            {data.isPlaying ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                Now Playing
+              </>
+            ) : (
+              "Recently Played"
+            )}
+          </p>
+          <p className="text-[var(--text-primary)] font-medium truncate">{data.title}</p>
+          <p className="text-[var(--text-secondary)] text-sm truncate">{data.artist}</p>
+        </div>
+      </div>
+    </motion.a>
+  );
+}
+
+// Currently Section - Reading & Listening (Spotify)
+function CurrentlySection() {
+  return (
+    <section className="mb-20">
+      <FadeIn>
+        <h2 className="text-2xl font-semibold mb-8">Currently</h2>
+      </FadeIn>
+      <StaggerChildren className="grid md:grid-cols-2 gap-4">
+        <StaggerItem>
+          <motion.div
+            className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
+            whileHover={{ scale: 1.02, borderColor: "var(--text-muted)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          >
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-lg">
+                📚
+              </div>
+              <div>
+                <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1">
+                  Reading
+                </p>
+                <p className="text-[var(--text-primary)] font-medium">{currently.reading}</p>
+              </div>
+            </div>
+          </motion.div>
+        </StaggerItem>
+        <StaggerItem>
+          <SpotifyNowPlaying />
+        </StaggerItem>
+      </StaggerChildren>
+    </section>
+  );
+}
+
+// Marquee Skills Section
+function SkillsMarquee() {
+  return (
+    <section className="mb-20">
+      <FadeIn>
+        <h2 className="text-2xl font-semibold mb-8">Skills</h2>
+      </FadeIn>
+      <div className="space-y-4 overflow-hidden">
+        {/* Row 1 - scrolls left */}
+        <div className="relative">
+          <div className="flex animate-marquee">
+            {[...skillsRow1, ...skillsRow1].map((skill, i) => (
+              <span
+                key={`${skill}-${i}`}
+                className="flex-shrink-0 px-4 py-2 mx-2 text-sm rounded-full bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-muted)] transition-colors"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 2 - scrolls right */}
+        <div className="relative">
+          <div className="flex animate-marquee-reverse">
+            {[...skillsRow2, ...skillsRow2].map((skill, i) => (
+              <span
+                key={`${skill}-${i}`}
+                className="flex-shrink-0 px-4 py-2 mx-2 text-sm rounded-full bg-[var(--bg-secondary)] border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-muted)] transition-colors"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Timeline Experience Section
+function TimelineExperience() {
+  return (
+    <section className="mb-20">
+      <FadeIn>
+        <h2 className="text-2xl font-semibold mb-8">Experience</h2>
+      </FadeIn>
+      <div className="relative">
+        {/* Vertical line */}
+        <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-[var(--text-muted)] via-[var(--border)] to-transparent" />
+
+        <StaggerChildren className="space-y-8">
+          {experience.map((exp, index) => (
+            <StaggerItem key={index}>
+              <div className="relative pl-8">
+                {/* Dot on timeline */}
+                <motion.div
+                  className="absolute left-0 top-2 w-4 h-4 rounded-full bg-[var(--bg-primary)] border-2 border-[var(--text-muted)]"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: index * 0.1, type: "spring" }}
+                />
+
+                <motion.div
+                  className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
+                  whileHover={{ x: 4, borderColor: "var(--text-muted)" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                    <h3 className="text-lg font-medium">{exp.role}</h3>
+                    <span className="text-sm text-[var(--text-muted)] font-mono">
+                      {exp.period}
+                    </span>
+                  </div>
+                  <p className="text-[var(--accent)] text-sm mb-2">{exp.company}</p>
+                  <p className="text-[var(--text-secondary)] text-sm">{exp.description}</p>
+                </motion.div>
+              </div>
+            </StaggerItem>
+          ))}
+        </StaggerChildren>
+      </div>
+    </section>
+  );
+}
 
 export default function AboutPage() {
   return (
@@ -67,61 +324,14 @@ export default function AboutPage() {
         </FadeIn>
       </section>
 
-      {/* Skills Section */}
-      <section className="mb-20">
-        <FadeIn>
-          <h2 className="text-2xl font-semibold mb-8">Skills</h2>
-        </FadeIn>
-        <StaggerChildren className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {skills.map((skillGroup) => (
-            <StaggerItem key={skillGroup.category}>
-              <div className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]">
-                <h3 className="text-sm font-medium text-[var(--text-secondary)] mb-4">
-                  {skillGroup.category}
-                </h3>
-                <ul className="space-y-2">
-                  {skillGroup.items.map((skill) => (
-                    <li
-                      key={skill}
-                      className="text-sm text-[var(--text-primary)] flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--border)]" />
-                      {skill}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerChildren>
-      </section>
+      {/* Currently - Reading & Listening (Spotify) */}
+      <CurrentlySection />
 
-      {/* Experience Section */}
-      <section className="mb-20">
-        <FadeIn>
-          <h2 className="text-2xl font-semibold mb-8">Experience</h2>
-        </FadeIn>
-        <StaggerChildren className="space-y-6">
-          {experience.map((exp, index) => (
-            <StaggerItem key={index}>
-              <motion.div
-                className="p-6 rounded-xl bg-[var(--bg-primary)] border border-[var(--bg-tertiary)]"
-                whileHover={{ borderColor: "var(--border)" }}
-                transition={{ duration: 0.2 }}
-              >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                  <h3 className="text-lg font-medium">{exp.role}</h3>
-                  <span className="text-sm text-[var(--text-muted)] font-mono">
-                    {exp.period}
-                  </span>
-                </div>
-                <p className="text-[var(--text-secondary)] text-sm mb-2">{exp.company}</p>
-                <p className="text-[var(--text-muted)] text-sm">{exp.description}</p>
-              </motion.div>
-            </StaggerItem>
-          ))}
-        </StaggerChildren>
-      </section>
+      {/* Skills Marquee */}
+      <SkillsMarquee />
+
+      {/* Timeline Experience */}
+      <TimelineExperience />
 
       {/* Contact CTA */}
       <section>

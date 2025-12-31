@@ -44,15 +44,20 @@ function TerminalLoader() {
 }
 
 export default function LoadingScreen() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Shortened loading time for better UX
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
+    // Only show loading screen on first visit (not on client-side navigation)
+    const hasLoaded = sessionStorage.getItem("hasLoaded");
 
-    return () => clearTimeout(timer);
+    if (!hasLoaded) {
+      setIsLoading(true);
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+        sessionStorage.setItem("hasLoaded", "true");
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (
