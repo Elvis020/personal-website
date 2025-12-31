@@ -99,7 +99,7 @@ export default function BlogPostClient({ content, headings }: BlogPostClientProp
   }
 
   return (
-    <div className="relative pb-20 xl:pb-0">
+    <div className="relative pb-0 md:pb-20 xl:pb-0">
       {/* Article content */}
       <div
         className="prose prose-lg max-w-none dark:prose-invert

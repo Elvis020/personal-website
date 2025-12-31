@@ -66,11 +66,14 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
       const containerRect = container.getBoundingClientRect();
       const buttonRect = button.getBoundingClientRect();
 
-      // Center the active button in the container
-      const scrollLeft = button.offsetLeft - container.offsetWidth / 2 + button.offsetWidth / 2;
+      // Center the active button in the container, but keep first item at start
+      const isFirstItem = headings.findIndex((h) => h.id === activeId) === 0;
+      const scrollLeft = isFirstItem
+        ? 0
+        : Math.max(0, button.offsetLeft - container.offsetWidth / 2 + button.offsetWidth / 2);
       container.scrollTo({ left: scrollLeft, behavior: "smooth" });
     }
-  }, [activeId]);
+  }, [activeId, headings]);
 
   const handleClick = (id: string) => {
     const element = document.getElementById(id);
@@ -85,7 +88,7 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
   if (headings.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-primary)]/95 backdrop-blur-lg border-t border-[var(--border)] xl:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-primary)]/95 backdrop-blur-lg border-t border-[var(--border)] hidden md:block xl:hidden">
       {/* Progress bar */}
       <div className="h-0.5 bg-[var(--border)] relative">
         <div

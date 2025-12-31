@@ -2,14 +2,23 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useState } from "react";
 
 // Blur reveal animation wrapper
-function BlurReveal({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+function BlurReveal({
+  children,
+  delay = 0,
+  baseDelay = 0
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  baseDelay?: number;
+}) {
   return (
     <motion.div
       initial={{ filter: "blur(10px)", opacity: 0 }}
       animate={{ filter: "blur(0px)", opacity: 1 }}
-      transition={{ duration: 0.8, delay, ease: "easeOut" }}
+      transition={{ duration: 0.8, delay: baseDelay + delay, ease: "easeOut" }}
     >
       {children}
     </motion.div>
@@ -17,24 +26,31 @@ function BlurReveal({ children, delay = 0 }: { children: React.ReactNode; delay?
 }
 
 export default function Hero() {
+  // Check if this is the first visit (loading screen is showing)
+  // Use lazy initializer to read sessionStorage synchronously on first render
+  const [baseDelay] = useState(() => {
+    if (typeof window === "undefined") return 2.1;
+    return sessionStorage.getItem("hasLoaded") ? 0 : 2.1;
+  });
+
   return (
     <section className="min-h-[90vh] flex items-center justify-center relative overflow-hidden">
       <div className="max-w-5xl mx-auto px-6 py-32">
         <div className="max-w-3xl">
           {/* Greeting */}
-          <BlurReveal delay={0.1}>
+          <BlurReveal delay={0.1} baseDelay={baseDelay}>
             <p className="text-[var(--text-secondary)] text-lg mb-4 font-mono">Hi, I&apos;m</p>
           </BlurReveal>
 
           {/* Name */}
-          <BlurReveal delay={0.2}>
+          <BlurReveal delay={0.2} baseDelay={baseDelay}>
             <h1 className="text-5xl md:text-7xl font-semibold tracking-tight mb-6">
               <span className="text-[var(--text-primary)]">Elvis O. Amoako</span>
             </h1>
           </BlurReveal>
 
           {/* Tagline */}
-          <BlurReveal delay={0.4}>
+          <BlurReveal delay={0.4} baseDelay={baseDelay}>
             <p className="text-xl md:text-2xl text-[var(--text-secondary)] leading-relaxed mb-8 max-w-2xl">
               I build things for the web. Currently exploring the intersection
               of design, code, and emerging technologies.
@@ -42,7 +58,7 @@ export default function Hero() {
           </BlurReveal>
 
           {/* Status badge */}
-          <BlurReveal delay={0.6}>
+          <BlurReveal delay={0.6} baseDelay={baseDelay}>
             <div className="flex items-center gap-3 text-sm">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -55,7 +71,7 @@ export default function Hero() {
           </BlurReveal>
 
           {/* CTA Buttons */}
-          <BlurReveal delay={0.8}>
+          <BlurReveal delay={0.8} baseDelay={baseDelay}>
             <div className="flex flex-wrap items-center gap-4 mt-10">
               <Link href="/projects">
                 <motion.div
