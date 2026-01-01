@@ -37,6 +37,8 @@ export default function RotatingCursor() {
 
   // Animation frame ref
   const frameRef = useRef<number | null>(null);
+  const isAnimating = useRef(false);
+  const idleTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -78,6 +80,17 @@ export default function RotatingCursor() {
       cursor.style.left = `${e.clientX}px`;
       cursor.style.top = `${e.clientY}px`;
 
+      // Start animation if not running
+      startAnimation();
+
+      // Reset idle timeout
+      if (idleTimeout.current) {
+        clearTimeout(idleTimeout.current);
+      }
+      idleTimeout.current = setTimeout(() => {
+        idleTimeout.current = null;
+      }, 500);
+
       // Calculate velocity
       const dx = e.clientX - prevPos.current.x;
       const dy = e.clientY - prevPos.current.y;
@@ -115,8 +128,27 @@ export default function RotatingCursor() {
       prevPos.current = { x: e.clientX, y: e.clientY };
     };
 
+    // Start animation loop (only when needed)
+    const startAnimation = () => {
+      if (isAnimating.current) return;
+      isAnimating.current = true;
+      frameRef.current = requestAnimationFrame(animateRotation);
+    };
+
+    // Stop animation loop (when idle)
+    const stopAnimation = () => {
+      if (!isAnimating.current) return;
+      isAnimating.current = false;
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+        frameRef.current = null;
+      }
+    };
+
     // Smooth rotation animation loop
     const animateRotation = () => {
+      if (!isAnimating.current) return;
+
       const easeFactor = 0.12;
 
       currentRotation.current = lerp(
@@ -153,6 +185,12 @@ export default function RotatingCursor() {
       // Decay speed
       speed.current *= 0.95;
 
+      // Stop animation when effectively idle (speed very low and no recent movement)
+      if (speed.current < 0.1 && !idleTimeout.current) {
+        stopAnimation();
+        return;
+      }
+
       frameRef.current = requestAnimationFrame(animateRotation);
     };
 
@@ -184,12 +222,10 @@ export default function RotatingCursor() {
       cursor.style.left = `${e.clientX}px`;
       cursor.style.top = `${e.clientY}px`;
       prevPos.current = { x: e.clientX, y: e.clientY };
+      startAnimation();
     };
 
-    // Start animation loop
-    frameRef.current = requestAnimationFrame(animateRotation);
-
-    // Event listeners
+    // Event listeners (animation starts on first mouse move)
     window.addEventListener("mousemove", updateCursor, { passive: true });
     document.addEventListener("mouseover", handleMouseOver, { passive: true });
     document.addEventListener("mouseout", handleMouseOut, { passive: true });
@@ -198,6 +234,7 @@ export default function RotatingCursor() {
 
     return () => {
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+      if (idleTimeout.current) clearTimeout(idleTimeout.current);
       window.removeEventListener("mousemove", updateCursor);
       document.removeEventListener("mouseover", handleMouseOver);
       document.removeEventListener("mouseout", handleMouseOut);

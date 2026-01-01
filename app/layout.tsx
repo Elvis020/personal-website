@@ -9,23 +9,23 @@ import ThemeProvider from "@/components/providers/ThemeProvider";
 import RotatingCursor from "@/components/ui/RotatingCursor";
 import MobileShapes from "@/components/ui/MobileShapes";
 
-// Playful font combination - Friendly & Rounded
+// Playful font combination - Friendly & Rounded (optimized weights)
 const fredoka = Fredoka({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "600"],
 });
 
 const quicksand = Quicksand({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500"],
 });
 
 const victorMono = Victor_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {

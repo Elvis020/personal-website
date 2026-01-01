@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { useDeviceCapability } from "@/hooks/useDeviceCapability";
 
 interface FloatingShape {
   id: number;
@@ -160,6 +161,7 @@ export default function MobileShapes() {
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
+  const { isLowEnd } = useDeviceCapability();
 
   // Track scroll position for opacity changes
   // More subtle in dark mode, more visible in light mode
@@ -175,7 +177,8 @@ export default function MobileShapes() {
     setShapes(generateShapes());
   }, []);
 
-  if (!mounted) return null;
+  // Skip on low-end devices
+  if (!mounted || isLowEnd) return null;
 
   return (
     <div className="md:hidden fixed top-0 left-0 right-0 h-[60vh] z-[1] pointer-events-none overflow-hidden">
