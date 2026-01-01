@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 
 interface FloatingShape {
   id: number;
@@ -157,11 +158,17 @@ function Shape({ shape, scrollOpacity }: { shape: FloatingShape; scrollOpacity: 
 export default function MobileShapes() {
   const [shapes, setShapes] = useState<FloatingShape[]>([]);
   const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   // Track scroll position for opacity changes
-  // Subtle in hero (15%), nearly invisible elsewhere (3%)
+  // More subtle in dark mode, more visible in light mode
   const { scrollY } = useScroll();
-  const scrollOpacity = useTransform(scrollY, [0, 250], [0.15, 0.03]);
+  const scrollOpacity = useTransform(
+    scrollY,
+    [0, 250],
+    isDark ? [0.08, 0.02] : [0.15, 0.03]
+  );
 
   useEffect(() => {
     setMounted(true);

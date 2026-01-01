@@ -188,7 +188,7 @@ function FloatingShapes({ isDark = true }: { isDark?: boolean }) {
           <meshBasicMaterial
             color={shapeColor}
             transparent
-            opacity={0.25}
+            opacity={isDark ? 0.12 : 0.25}
             wireframe
           />
         </mesh>
