@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useState } from "react";
 
 const socialLinks = [
   {
@@ -34,10 +34,50 @@ const socialLinks = [
 
 // Mobile: Combined footer with scroll progress
 function MobileFooter() {
-  const { scrollYProgress } = useScroll();
-  // Direct mapping without spring physics - stops immediately when scroll stops
-  const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const [progress, setProgress] = useState(0);
   const currentYear = new Date().getFullYear();
+
+  useEffect(() => {
+    // Get accurate viewport height (works with Safari's dynamic address bar)
+    const getViewportHeight = () => {
+      return window.visualViewport?.height ?? window.innerHeight;
+    };
+
+    const calculateProgress = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight;
+      const viewportHeight = getViewportHeight();
+      const scrollableHeight = docHeight - viewportHeight;
+
+      if (scrollableHeight <= 0) {
+        setProgress(0);
+        return;
+      }
+
+      const newProgress = Math.min(100, Math.max(0, (scrollTop / scrollableHeight) * 100));
+      setProgress(newProgress);
+    };
+
+    // Initial calculation
+    calculateProgress();
+
+    // Listen to scroll events
+    window.addEventListener("scroll", calculateProgress, { passive: true });
+
+    // Listen to viewport changes (Safari address bar)
+    window.visualViewport?.addEventListener("resize", calculateProgress);
+    window.visualViewport?.addEventListener("scroll", calculateProgress);
+
+    // Fallback resize listener
+    window.addEventListener("resize", calculateProgress, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", calculateProgress);
+      window.visualViewport?.removeEventListener("resize", calculateProgress);
+      window.visualViewport?.removeEventListener("scroll", calculateProgress);
+      window.removeEventListener("resize", calculateProgress);
+    };
+  }, []);
 
   return (
     <div
@@ -54,16 +94,16 @@ function MobileFooter() {
       {/* Progress bar */}
       <div className="relative h-[2px]">
         <div className="absolute inset-0 bg-[var(--text-muted)]/20" />
-        <motion.div
+        <div
           className="absolute left-0 top-0 h-full bg-[var(--text-primary)]"
-          style={{ width: progressWidth }}
+          style={{ width: `${progress}%` }}
         />
-        <motion.div
+        <div
           className="absolute top-1/2 -translate-y-1/2"
-          style={{ left: progressWidth }}
+          style={{ left: `${progress}%` }}
         >
           <div className="w-2 h-2 -translate-x-1/2 rounded-full bg-[var(--text-primary)]" />
-        </motion.div>
+        </div>
       </div>
 
       {/* Footer content */}
