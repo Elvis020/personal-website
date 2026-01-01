@@ -105,14 +105,15 @@ function FloatingControls({
   const isHome = pathname === "/";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-      className="md:hidden fixed z-50"
+    <div
+      className="md:hidden fixed z-50 animate-float-in"
       style={{
         top: "calc(env(safe-area-inset-top) + 12px)",
         right: "16px",
+        /* GPU layer for scroll stability - prevents bounce on iOS */
+        transform: "translate3d(0, 0, 0)",
+        WebkitTransform: "translate3d(0, 0, 0)",
+        willChange: "transform",
       }}
     >
       <div className="flex items-center gap-[2px] p-1 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-full">
@@ -197,7 +198,7 @@ function FloatingControls({
           </div>
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
