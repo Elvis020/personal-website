@@ -116,10 +116,10 @@ const categoryColors: Record<string, string> = {
 
 export default function ReadsPage() {
   return (
-    <div className="max-w-5xl mx-auto px-6 pt-12 pb-8">
+    <div className="max-w-5xl mx-auto px-6 mobile-content-top pb-8">
       {/* Header */}
       <FadeIn>
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-6">
+        <h1 className="text-4xl md:text-5xl tracking-tight mb-6">
           Weekly Reads
         </h1>
       </FadeIn>
@@ -137,7 +137,7 @@ export default function ReadsPage() {
           <section key={week.week}>
             <FadeIn delay={weekIndex * 0.1}>
               <div className="flex items-baseline gap-4 mb-6">
-                <h2 className="text-xl font-semibold">{week.week}</h2>
+                <h2 className="text-xl">{week.week}</h2>
                 <span className="text-sm text-[var(--text-muted)] font-mono">
                   {week.dateRange}
                 </span>

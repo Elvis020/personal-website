@@ -167,7 +167,7 @@ function CurrentlySection() {
   return (
     <section className="mb-20">
       <FadeIn>
-        <h2 className="text-2xl font-semibold mb-8">Currently</h2>
+        <h2 className="text-2xl mb-8">Currently</h2>
       </FadeIn>
       <StaggerChildren className="grid md:grid-cols-2 gap-4">
         <StaggerItem>
@@ -202,7 +202,7 @@ function SkillsMarquee() {
   return (
     <section className="mb-20">
       <FadeIn>
-        <h2 className="text-2xl font-semibold mb-8">Skills</h2>
+        <h2 className="text-2xl mb-8">Skills</h2>
       </FadeIn>
       <div className="space-y-4 overflow-hidden">
         {/* Row 1 - scrolls left */}
@@ -242,7 +242,7 @@ function TimelineExperience() {
   return (
     <section className="mb-20">
       <FadeIn>
-        <h2 className="text-2xl font-semibold mb-8">Experience</h2>
+        <h2 className="text-2xl mb-8">Experience</h2>
       </FadeIn>
       <div className="relative">
         {/* Vertical line */}
@@ -285,10 +285,10 @@ function TimelineExperience() {
 
 export default function AboutPage() {
   return (
-    <div className="max-w-5xl mx-auto px-6 pt-12 pb-8">
+    <div className="max-w-5xl mx-auto px-6 mobile-content-top pb-8">
       {/* Header */}
       <FadeIn>
-        <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-6">
+        <h1 className="text-4xl md:text-5xl tracking-tight mb-6">
           About Me
         </h1>
       </FadeIn>
@@ -304,7 +304,7 @@ export default function AboutPage() {
       {/* Bio Section */}
       <section className="mb-20">
         <FadeIn>
-          <h2 className="text-2xl font-semibold mb-8">Background</h2>
+          <h2 className="text-2xl mb-8">Background</h2>
         </FadeIn>
         <FadeIn delay={0.1}>
           <div className="prose dark:prose-invert max-w-none">
@@ -337,7 +337,7 @@ export default function AboutPage() {
       <section>
         <FadeIn>
           <div className="p-8 rounded-xl bg-gradient-to-br from-[var(--bg-secondary)] to-[var(--bg-primary)] border border-[var(--border)] text-center">
-            <h2 className="text-2xl font-semibold mb-4">Let&apos;s Connect</h2>
+            <h2 className="text-2xl mb-4">Let&apos;s Connect</h2>
             <p className="text-[var(--text-secondary)] mb-6 max-w-md mx-auto">
               I&apos;m always open to discussing new projects, creative ideas, or
               opportunities to be part of something great.

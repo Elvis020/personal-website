@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { useTheme } from "next-themes";
 
 interface TrailPoint {
   x: number;
@@ -12,6 +13,8 @@ interface TrailPoint {
 export default function RotatingCursor() {
   const [mounted, setMounted] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const trailRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -216,21 +219,27 @@ export default function RotatingCursor() {
 
   if (!mounted) return null;
 
+  // Theme-aware colors
+  const cursorFill = isDark ? "#ffffff" : "#2c2c2c";
+  const cursorStroke = isDark ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.5)";
+  const glowColor = isDark ? "rgba(255, 255, 255, 0.6)" : "rgba(0, 0, 0, 0.4)";
+  const ghostFill = isDark ? "rgba(255, 255, 255, 0.3)" : "rgba(44, 44, 44, 0.3)";
+
   const CursorTriangle = ({ isGhost = false, index = 0 }: { isGhost?: boolean; index?: number }) => (
     <svg
       width="18"
       height="18"
       viewBox="0 0 20 20"
       style={{
-        filter: isGhost ? 'none' : 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.6))',
+        filter: isGhost ? 'none' : `drop-shadow(0 0 8px ${glowColor})`,
         transform: isHovering && !isGhost ? "scale(0.7)" : "scale(1)",
         transition: "transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
       }}
     >
       <path
         d="M10 2L17 18H3L10 2Z"
-        fill={isGhost ? "rgba(255, 255, 255, 0.3)" : "#ffffff"}
-        stroke="rgba(0, 0, 0, 0.3)"
+        fill={isGhost ? ghostFill : cursorFill}
+        stroke={cursorStroke}
         strokeWidth={isGhost ? "0.5" : "1"}
         strokeLinejoin="round"
         opacity={isGhost ? 0.4 - index * 0.1 : 1}
@@ -274,8 +283,9 @@ export default function RotatingCursor() {
         {/* Outer ring - reacts to speed */}
         <div
           ref={ringRef}
-          className="absolute left-1/2 top-1/2 w-10 h-10 rounded-full border border-white/40"
+          className="absolute left-1/2 top-1/2 w-10 h-10 rounded-full border"
           style={{
+            borderColor: isDark ? "rgba(255, 255, 255, 0.4)" : "rgba(44, 44, 44, 0.4)",
             transform: "translate(-50%, -50%) scale(1)",
             opacity: 0,
             transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease",
@@ -292,8 +302,9 @@ export default function RotatingCursor() {
 
         {/* Center dot - appears on hover */}
         <div
-          className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full bg-black/50"
+          className="absolute left-1/2 top-1/2 w-1 h-1 rounded-full"
           style={{
+            backgroundColor: isDark ? "rgba(0, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.7)",
             transform: "translate(-50%, -50%)",
             opacity: isHovering ? 1 : 0,
             transition: "opacity 0.15s ease",

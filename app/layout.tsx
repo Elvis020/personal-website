@@ -1,5 +1,5 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
+import { DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -7,15 +7,28 @@ import LoadingScreen from "@/components/animations/LoadingScreen";
 import ParticleWrapper from "@/components/three/ParticleWrapper";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import RotatingCursor from "@/components/ui/RotatingCursor";
+import MobileShapes from "@/components/ui/MobileShapes";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Primary body font - clean, highly readable
+const dmSans = DM_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Display/heading font - same design family as DM Sans
+const dmSerifDisplay = DM_Serif_Display({
+  variable: "--font-serif",
   subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+});
+
+// Mono font for code
+const dmMono = DM_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -48,14 +61,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${dmSans.variable} ${dmSerifDisplay.variable} ${dmMono.variable} antialiased`}
       >
         <ThemeProvider>
           <LoadingScreen />
           <ParticleWrapper />
           <RotatingCursor />
+          <MobileShapes />
           <Header />
-          <main className="min-h-screen mobile-safe-top md:pt-0">
+          <main className="min-h-screen pb-6 md:pb-0">
             {children}
           </main>
           <Footer />

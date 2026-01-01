@@ -200,10 +200,16 @@ function FloatingShapes({ isDark = true }: { isDark?: boolean }) {
 export default function ParticleBackground() {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const isDark = resolvedTheme === "dark";
 
   useEffect(() => {
     setMounted(true);
+    setIsMobile(window.innerWidth < 768);
+
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Check for reduced motion preference
@@ -216,15 +222,21 @@ export default function ParticleBackground() {
   }
 
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none">
+    <div className="fixed inset-0 z-[1] pointer-events-none">
       <Canvas
-        camera={{ position: [0, 0, 5], fov: 60 }}
-        dpr={[1, 1.5]}
-        gl={{ antialias: true, alpha: true }}
+        camera={{ position: [0, 0, isMobile ? 4 : 5], fov: isMobile ? 70 : 60 }}
+        dpr={[1, isMobile ? 1 : 1.5]}
+        gl={{ antialias: !isMobile, alpha: true }}
+        style={{ pointerEvents: "none" }}
+        events={() => ({ enabled: false, priority: 0 })}
       >
         <ShootingStars isDark={isDark} />
-        <AmbientParticles count={60} isDark={isDark} />
-        <FloatingShapes isDark={isDark} />
+        {!isMobile && (
+          <>
+            <AmbientParticles count={60} isDark={isDark} />
+            <FloatingShapes isDark={isDark} />
+          </>
+        )}
       </Canvas>
     </div>
   );

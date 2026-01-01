@@ -34,8 +34,8 @@ export default function Hero() {
   });
 
   return (
-    <section className="min-h-[90vh] flex items-center justify-center relative overflow-hidden">
-      <div className="max-w-5xl mx-auto px-6 py-32">
+    <section className="min-h-[50vh] md:min-h-[60vh] flex items-center relative overflow-hidden">
+      <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">
         <div className="max-w-3xl">
           {/* Greeting */}
           <BlurReveal delay={0.1} baseDelay={baseDelay}>
@@ -44,14 +44,14 @@ export default function Hero() {
 
           {/* Name */}
           <BlurReveal delay={0.2} baseDelay={baseDelay}>
-            <h1 className="text-5xl md:text-7xl font-semibold tracking-tight mb-6">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl tracking-tight mb-6">
               <span className="text-[var(--text-primary)]">Elvis O. Amoako</span>
             </h1>
           </BlurReveal>
 
           {/* Tagline */}
           <BlurReveal delay={0.4} baseDelay={baseDelay}>
-            <p className="text-xl md:text-2xl text-[var(--text-secondary)] leading-relaxed mb-8 max-w-2xl">
+            <p className="text-base md:text-xl lg:text-2xl text-[var(--text-secondary)] leading-relaxed mb-8 max-w-2xl">
               I build things for the web. Currently exploring the intersection
               of design, code, and emerging technologies.
             </p>
@@ -100,8 +100,6 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Subtle corner glow */}
-      <div className="absolute -top-20 -right-20 w-[300px] h-[300px] bg-[var(--bg-tertiary)] rounded-full blur-[100px] opacity-30 pointer-events-none" />
     </section>
   );
 }

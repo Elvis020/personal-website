@@ -51,7 +51,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const headings = extractHeadings(post.content);
 
   return (
-    <div className="max-w-6xl mx-auto px-6 pt-12 pb-8">
+    <div className="max-w-6xl mx-auto px-6 mobile-content-top pb-8">
       <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12">
         {/* Main Content */}
         <article className="max-w-3xl">
@@ -89,7 +89,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               ))}
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight mb-4">
+            <h1 className="text-4xl md:text-5xl tracking-tight mb-4">
               {post.title}
             </h1>
 

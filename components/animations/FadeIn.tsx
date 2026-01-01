@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 interface FadeInProps {
   children: ReactNode;
@@ -11,10 +12,10 @@ interface FadeInProps {
 }
 
 const directionOffset = {
-  up: { y: 30 },
-  down: { y: -30 },
-  left: { x: 30 },
-  right: { x: -30 },
+  up: { y: 20 },
+  down: { y: -20 },
+  left: { x: 20 },
+  right: { x: -20 },
 };
 
 export default function FadeIn({
@@ -23,27 +24,20 @@ export default function FadeIn({
   direction = "up",
   className = "",
 }: FadeInProps) {
-  const [hasAnimated, setHasAnimated] = useState(false);
-
-  // Trigger animation after mount with delay
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHasAnimated(true);
-    }, 50); // Small delay to ensure DOM is ready
-    return () => clearTimeout(timer);
-  }, []);
+  const pathname = usePathname();
 
   return (
     <motion.div
+      key={pathname} // Force re-mount on navigation
       initial={{
         opacity: 0,
         ...directionOffset[direction],
       }}
-      animate={hasAnimated ? {
+      animate={{
         opacity: 1,
         x: 0,
         y: 0,
-      } : undefined}
+      }}
       transition={{
         duration: 0.5,
         delay,

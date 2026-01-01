@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 interface StaggerChildrenProps {
   children: ReactNode;
@@ -14,11 +15,13 @@ export default function StaggerChildren({
   staggerDelay = 0.1,
   className = "",
 }: StaggerChildrenProps) {
+  const pathname = usePathname();
+
   return (
     <motion.div
+      key={pathname} // Force re-mount on navigation
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-50px" }}
+      animate="visible"
       variants={{
         hidden: {},
         visible: {
@@ -44,12 +47,12 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 15 },
         visible: {
           opacity: 1,
           y: 0,
           transition: {
-            duration: 0.5,
+            duration: 0.4,
             ease: [0.22, 1, 0.36, 1],
           },
         },

@@ -32,16 +32,17 @@ const reads = [
 
 export default function LatestReads() {
   return (
-    <section className="pt-16 pb-8 border-t border-[var(--border)]">
+    <section className="py-8 md:py-16">
       <div className="max-w-5xl mx-auto px-6">
         <FadeIn>
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-2xl font-semibold tracking-tight">
+          <div className="flex items-center gap-4 mb-8 md:mb-12">
+            <div className="h-px flex-1 bg-gradient-to-r from-[var(--border)] to-transparent" />
+            <h2 className="text-lg md:text-2xl tracking-tight text-[var(--text-secondary)]">
               Weekly Reads
             </h2>
             <Link
               href="/reads"
-              className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+              className="text-xs md:text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
             >
               View all →
             </Link>
