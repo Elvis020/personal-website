@@ -41,8 +41,15 @@ function MobileFooter() {
 
   return (
     <div
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--bg-primary)]/90 backdrop-blur-sm border-t border-[var(--border)]"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--bg-primary)] border-t border-[var(--border)]"
+      style={{
+        paddingBottom: "env(safe-area-inset-bottom)",
+        // Safari fixed element stability fixes
+        WebkitTransform: "translate3d(0, 0, 0)",
+        transform: "translate3d(0, 0, 0)",
+        WebkitBackfaceVisibility: "hidden",
+        backfaceVisibility: "hidden",
+      }}
     >
       {/* Progress bar */}
       <div className="relative h-[2px]">
