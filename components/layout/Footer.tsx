@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 const socialLinks = [
   {
@@ -35,7 +35,7 @@ const socialLinks = [
 // Sticky scroll progress indicator for mobile
 function MobileScrollIndicator() {
   const [progress, setProgress] = useState(0);
-  const indicatorRef = useRef<HTMLDivElement>(null);
+  const [isScrollable, setIsScrollable] = useState(false);
 
   useEffect(() => {
     const calculateProgress = () => {
@@ -43,6 +43,10 @@ function MobileScrollIndicator() {
       const docHeight = document.documentElement.scrollHeight;
       const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       const scrollableHeight = docHeight - viewportHeight;
+
+      // Only show indicator if page has meaningful scroll (more than 100px)
+      const hasScroll = scrollableHeight > 100;
+      setIsScrollable(hasScroll);
 
       if (scrollableHeight <= 0) {
         setProgress(0);
@@ -66,9 +70,11 @@ function MobileScrollIndicator() {
     };
   }, []);
 
+  // Don't render if page isn't scrollable
+  if (!isScrollable) return null;
+
   return (
     <div
-      ref={indicatorRef}
       className="md:hidden sticky bottom-0 left-0 right-0 z-40 bg-[var(--bg-primary)] border-t border-[var(--border)]"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
