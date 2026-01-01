@@ -67,7 +67,7 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
   useFrame((_, delta) => {
     const star = starRef.current;
 
-    if (!star.active && Math.random() < 0.005 + index * 0.001) {
+    if (!star.active && Math.random() < 0.003 + index * 0.0005) {
       spawnStar();
     }
 
@@ -97,7 +97,7 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     positions[5] = star.position.z + tailDir.z;
 
     geometry.attributes.position.needsUpdate = true;
-    material.opacity = star.opacity * 0.7;
+    material.opacity = star.opacity * 0.4;
 
     if (star.lifetime >= star.maxLifetime || star.position.x < -15 || star.position.y < -10) {
       star.active = false;
@@ -111,7 +111,7 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
 function ShootingStars({ isDark = true }: { isDark?: boolean }) {
   return (
     <group>
-      {Array(6).fill(null).map((_, i) => (
+      {Array(12).fill(null).map((_, i) => (
         <ShootingStar key={i} isDark={isDark} index={i} />
       ))}
     </group>
@@ -175,20 +175,20 @@ function FloatingShapes({ isDark = true }: { isDark?: boolean }) {
 
   return (
     <group ref={groupRef}>
-      {[...Array(5)].map((_, i) => (
+      {[...Array(7)].map((_, i) => (
         <mesh
           key={i}
           position={[
-            Math.sin(i * 1.2) * 3,
-            Math.cos(i * 1.2) * 3,
-            -5 - i * 0.5,
+            Math.sin(i * 0.9) * 4,
+            Math.cos(i * 0.9) * 3.5,
+            -5 - i * 0.6,
           ]}
         >
-          <octahedronGeometry args={[0.1 + i * 0.02]} />
+          <octahedronGeometry args={[0.25 + i * 0.05]} />
           <meshBasicMaterial
             color={shapeColor}
             transparent
-            opacity={0.3}
+            opacity={0.25}
             wireframe
           />
         </mesh>

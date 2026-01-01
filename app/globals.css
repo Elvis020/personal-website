@@ -19,8 +19,13 @@
   --switcher-knob: #2c2c2c;
   --switcher-icon: #faf9f6;
 
-  /* Heading font */
-  --font-serif: 'DM Serif Display', Georgia, serif;
+  /* Playful font combination - Friendly & Rounded */
+  --font-display: 'Fredoka', system-ui, sans-serif;
+  --font-body: 'Quicksand', system-ui, sans-serif;
+  --font-mono: 'Victor Mono', ui-monospace, monospace;
+
+  /* Legacy alias */
+  --font-serif: var(--font-display);
 }
 
 /* Dark Theme - Soft charcoal, easy on eyes */
@@ -64,25 +69,25 @@ html {
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 /* Font utility classes */
 .font-sans {
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
 }
 
 .font-serif {
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-display);
 }
 
 .font-mono {
-  font-family: var(--font-mono), ui-monospace, monospace;
+  font-family: var(--font-mono);
 }
 
 /* Selection */
@@ -162,10 +167,10 @@ a {
   text-decoration: none;
 }
 
-/* Headings - Elegant serif for display text */
+/* Headings - Display font for headings */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif), Georgia, serif;
-  font-weight: 400;
+  font-family: var(--font-display);
+  font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.01em;
 }

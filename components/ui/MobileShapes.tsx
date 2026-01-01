@@ -19,16 +19,16 @@ function generateShapes(): FloatingShape[] {
   const shapes: FloatingShape[] = [];
   const types: FloatingShape["type"][] = ["circle", "ring", "line", "diamond", "dot"];
 
-  // 6 subtle shapes for hero section only
-  for (let i = 0; i < 6; i++) {
+  // 8 subtle shapes for hero section only
+  for (let i = 0; i < 8; i++) {
     shapes.push({
       id: i,
       type: types[Math.floor(Math.random() * types.length)],
       x: Math.random() * 80 + 10,
       y: Math.random() * 80 + 10, // Spread within the 60vh hero container
-      size: 10 + Math.random() * 20,
+      size: 20 + Math.random() * 35,
       rotation: Math.random() * 360,
-      baseOpacity: 0.8 + Math.random() * 0.2,
+      baseOpacity: 0.6 + Math.random() * 0.3,
       duration: 35 + Math.random() * 45,
       delay: Math.random() * -15,
     });

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
+import { Fredoka, Quicksand, Victor_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer, { ScrollIndicator } from "@/components/layout/Footer";
@@ -9,23 +9,20 @@ import ThemeProvider from "@/components/providers/ThemeProvider";
 import RotatingCursor from "@/components/ui/RotatingCursor";
 import MobileShapes from "@/components/ui/MobileShapes";
 
-// Primary body font - clean, highly readable
-const dmSans = DM_Sans({
-  variable: "--font-sans",
+// Playful font combination - Friendly & Rounded
+const fredoka = Fredoka({
+  variable: "--font-display",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
 });
 
-// Display/heading font - same design family as DM Sans
-const dmSerifDisplay = DM_Serif_Display({
-  variable: "--font-serif",
+const quicksand = Quicksand({
+  variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
+  weight: ["300", "400", "500", "600"],
 });
 
-// Mono font for code
-const dmMono = DM_Mono({
+const victorMono = Victor_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
@@ -61,7 +58,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${dmSans.variable} ${dmSerifDisplay.variable} ${dmMono.variable} antialiased`}
+        className={`${fredoka.variable} ${quicksand.variable} ${victorMono.variable} antialiased`}
       >
         <ThemeProvider>
           <LoadingScreen />
