@@ -57,6 +57,7 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--bg-primary);
 }
 
 body {
@@ -225,6 +226,22 @@ body::before {
     .mobile-safe-top {
       padding-top: 0;
     }
+  }
+}
+
+/* iOS Status Bar Background - prevents content showing through status bar */
+@supports (padding-top: env(safe-area-inset-top)) {
+  html::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background: var(--bg-primary);
+    z-index: 9999;
+    pointer-events: none;
+    transition: background-color 0.3s ease;
   }
 }
 
