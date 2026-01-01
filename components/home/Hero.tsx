@@ -100,8 +100,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Subtle gradient orb */}
-      <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-gradient-to-br from-[var(--bg-tertiary)] to-transparent rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      {/* Subtle corner glow */}
+      <div className="absolute -top-20 -right-20 w-[300px] h-[300px] bg-[var(--bg-tertiary)] rounded-full blur-[100px] opacity-30 pointer-events-none" />
     </section>
   );
 }
