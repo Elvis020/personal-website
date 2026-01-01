@@ -91,6 +91,45 @@ function PillsSidebar({ pathname }: { pathname: string }) {
   );
 }
 
+// Floating Home Button (top-left) - Quick access to homepage
+function FloatingHomeButton({ pathname }: { pathname: string }) {
+  const isHome = pathname === "/";
+
+  // Don't show on homepage
+  if (isHome) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+      className="md:hidden fixed z-50"
+      style={{
+        top: "calc(env(safe-area-inset-top) + 12px)",
+        left: "16px",
+      }}
+    >
+      <Link href="/">
+        <div className="flex items-center justify-center w-10 h-10 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-full hover:bg-[var(--bg-tertiary)] transition-colors">
+          <svg
+            className="w-5 h-5 text-[var(--text-muted)]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+            />
+          </svg>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
 // Floating Controls Pill (top-right) - Theme + Hamburger grouped
 function FloatingControls({
   menuOpen,
@@ -286,7 +325,10 @@ export default function Header() {
         }
       `}</style>
 
-      {/* Mobile: Floating controls */}
+      {/* Mobile: Floating home button (top-left) */}
+      <FloatingHomeButton pathname={pathname} />
+
+      {/* Mobile: Floating controls (top-right) */}
       <FloatingControls menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
       {/* Mobile Menu Overlay */}
