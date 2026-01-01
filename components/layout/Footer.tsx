@@ -75,11 +75,14 @@ function MobileScrollIndicator() {
 
   return (
     <div
-      className="md:hidden sticky bottom-0 left-0 right-0 z-40 bg-[var(--bg-primary)] border-t border-[var(--border)]"
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className="md:hidden sticky left-0 right-0 z-40 bg-[var(--bg-primary)] border-t border-[var(--border)]"
+      style={{
+        bottom: "env(safe-area-inset-bottom, 0px)",
+        marginBottom: "env(safe-area-inset-bottom, 0px)"
+      }}
     >
       {/* Progress bar */}
-      <div className="relative h-[2px]">
+      <div className="relative h-[3px]">
         <div className="absolute inset-0 bg-[var(--text-muted)]/20" />
         <div
           className="absolute left-0 top-0 h-full bg-[var(--text-primary)]"
@@ -89,7 +92,7 @@ function MobileScrollIndicator() {
           className="absolute top-1/2 -translate-y-1/2"
           style={{ left: `${progress}%` }}
         >
-          <div className="w-2 h-2 -translate-x-1/2 rounded-full bg-[var(--text-primary)]" />
+          <div className="w-2.5 h-2.5 -translate-x-1/2 rounded-full bg-[var(--text-primary)]" />
         </div>
       </div>
     </div>
