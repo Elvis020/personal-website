@@ -69,7 +69,7 @@ export default function RootLayout({
           <RotatingCursor />
           <MobileShapes />
           <Header />
-          <main className="min-h-screen pb-6 md:pb-0">
+          <main className="min-h-screen pb-16 md:pb-0">
             {children}
           </main>
           <Footer />
