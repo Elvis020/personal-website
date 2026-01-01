@@ -91,53 +91,19 @@ function PillsSidebar({ pathname }: { pathname: string }) {
   );
 }
 
-// Floating Home Button (top-left) - Quick access to homepage
-function FloatingHomeButton({ pathname }: { pathname: string }) {
-  const isHome = pathname === "/";
-
-  // Don't show on homepage
-  if (isHome) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-      className="md:hidden fixed z-50"
-      style={{
-        top: "calc(env(safe-area-inset-top) + 12px)",
-        left: "16px",
-      }}
-    >
-      <Link href="/">
-        <div className="flex items-center justify-center w-10 h-10 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-full hover:bg-[var(--bg-tertiary)] transition-colors">
-          <svg
-            className="w-5 h-5 text-[var(--text-muted)]"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-            />
-          </svg>
-        </div>
-      </Link>
-    </motion.div>
-  );
-}
-
-// Floating Controls Pill (top-right) - Theme + Hamburger grouped
+// Floating Controls Pill (top-right) - Home + Theme + Hamburger grouped
+// Uses pure CSS transitions for smooth Telegram-like expand/contract animation
 function FloatingControls({
   menuOpen,
   setMenuOpen,
+  pathname,
 }: {
   menuOpen: boolean;
   setMenuOpen: (open: boolean) => void;
+  pathname: string;
 }) {
+  const isHome = pathname === "/";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -150,6 +116,48 @@ function FloatingControls({
       }}
     >
       <div className="flex items-center gap-[2px] p-1 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-full">
+        {/* Home Button Container - CSS width transition */}
+        <div
+          className="overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+          style={{
+            maxWidth: isHome ? 0 : 44,
+            opacity: isHome ? 0 : 1,
+          }}
+        >
+          <Link href="/">
+            <div
+              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[var(--bg-tertiary)] transition-[background-color,transform] duration-200"
+              style={{
+                transform: isHome ? "scale(0.5)" : "scale(1)",
+              }}
+            >
+              <svg
+                className="w-5 h-5 text-[var(--text-muted)]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                />
+              </svg>
+            </div>
+          </Link>
+        </div>
+
+        {/* Divider after home - CSS opacity/scale transition */}
+        <div
+          className="w-[1px] h-5 bg-[var(--border)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+          style={{
+            opacity: isHome ? 0 : 1,
+            transform: isHome ? "scaleY(0)" : "scaleY(1)",
+            marginRight: isHome ? -1 : 0,
+          }}
+        />
+
         {/* Theme Switcher Container */}
         <div className="px-1">
           <ThemeSwitcher />
@@ -165,31 +173,26 @@ function FloatingControls({
           aria-label={menuOpen ? "Close menu" : "Open menu"}
         >
           <div className="relative w-4 h-3 flex flex-col justify-between">
-            <motion.span
-              animate={{
-                rotate: menuOpen ? 45 : 0,
-                y: menuOpen ? 5 : 0,
-                width: menuOpen ? 16 : 16,
+            <span
+              className="block h-[2px] bg-[var(--text-primary)] rounded-full origin-center transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              style={{
+                transform: menuOpen ? "rotate(45deg) translateY(5px)" : "rotate(0) translateY(0)",
+                width: 16,
               }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="block h-[2px] bg-[var(--text-primary)] rounded-full origin-center"
             />
-            <motion.span
-              animate={{
+            <span
+              className="block h-[2px] w-3 bg-[var(--text-primary)] rounded-full self-end transition-all duration-150"
+              style={{
                 opacity: menuOpen ? 0 : 1,
-                scaleX: menuOpen ? 0 : 1,
+                transform: menuOpen ? "scaleX(0)" : "scaleX(1)",
               }}
-              transition={{ duration: 0.15 }}
-              className="block h-[2px] w-3 bg-[var(--text-primary)] rounded-full self-end"
             />
-            <motion.span
-              animate={{
-                rotate: menuOpen ? -45 : 0,
-                y: menuOpen ? -5 : 0,
+            <span
+              className="block h-[2px] bg-[var(--text-primary)] rounded-full origin-center transition-all duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              style={{
+                transform: menuOpen ? "rotate(-45deg) translateY(-5px)" : "rotate(0) translateY(0)",
                 width: menuOpen ? 16 : 10,
               }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="block h-[2px] bg-[var(--text-primary)] rounded-full origin-center"
             />
           </div>
         </button>
@@ -325,11 +328,8 @@ export default function Header() {
         }
       `}</style>
 
-      {/* Mobile: Floating home button (top-left) */}
-      <FloatingHomeButton pathname={pathname} />
-
-      {/* Mobile: Floating controls (top-right) */}
-      <FloatingControls menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+      {/* Mobile: Floating controls (top-right) - includes home when not on homepage */}
+      <FloatingControls menuOpen={menuOpen} setMenuOpen={setMenuOpen} pathname={pathname} />
 
       {/* Mobile Menu Overlay */}
       <MenuOverlay
