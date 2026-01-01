@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 const socialLinks = [
   {
@@ -36,6 +37,7 @@ const socialLinks = [
 function MobileScrollIndicator() {
   const [progress, setProgress] = useState(0);
   const [isScrollable, setIsScrollable] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const calculateProgress = () => {
@@ -57,18 +59,24 @@ function MobileScrollIndicator() {
       setProgress(newProgress);
     };
 
-    calculateProgress();
+    // Reset and recalculate on route change
+    setIsScrollable(false);
+    setProgress(0);
+
+    // Small delay to let DOM update after navigation
+    const timer = setTimeout(calculateProgress, 100);
 
     window.addEventListener("scroll", calculateProgress, { passive: true });
     window.visualViewport?.addEventListener("resize", calculateProgress);
     window.addEventListener("resize", calculateProgress, { passive: true });
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("scroll", calculateProgress);
       window.visualViewport?.removeEventListener("resize", calculateProgress);
       window.removeEventListener("resize", calculateProgress);
     };
-  }, []);
+  }, [pathname]);
 
   // Don't render if page isn't scrollable
   if (!isScrollable) return null;
