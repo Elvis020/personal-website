@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const socialLinks = [
   {
@@ -32,21 +32,16 @@ const socialLinks = [
   },
 ];
 
-// Mobile: Combined footer with scroll progress
-function MobileFooter() {
+// Sticky scroll progress indicator for mobile
+function MobileScrollIndicator() {
   const [progress, setProgress] = useState(0);
-  const currentYear = new Date().getFullYear();
+  const indicatorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Get accurate viewport height (works with Safari's dynamic address bar)
-    const getViewportHeight = () => {
-      return window.visualViewport?.height ?? window.innerHeight;
-    };
-
     const calculateProgress = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       const docHeight = document.documentElement.scrollHeight;
-      const viewportHeight = getViewportHeight();
+      const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
       const scrollableHeight = docHeight - viewportHeight;
 
       if (scrollableHeight <= 0) {
@@ -58,38 +53,24 @@ function MobileFooter() {
       setProgress(newProgress);
     };
 
-    // Initial calculation
     calculateProgress();
 
-    // Listen to scroll events
     window.addEventListener("scroll", calculateProgress, { passive: true });
-
-    // Listen to viewport changes (Safari address bar)
     window.visualViewport?.addEventListener("resize", calculateProgress);
-    window.visualViewport?.addEventListener("scroll", calculateProgress);
-
-    // Fallback resize listener
     window.addEventListener("resize", calculateProgress, { passive: true });
 
     return () => {
       window.removeEventListener("scroll", calculateProgress);
       window.visualViewport?.removeEventListener("resize", calculateProgress);
-      window.visualViewport?.removeEventListener("scroll", calculateProgress);
       window.removeEventListener("resize", calculateProgress);
     };
   }, []);
 
   return (
     <div
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--bg-primary)] border-t border-[var(--border)]"
-      style={{
-        paddingBottom: "env(safe-area-inset-bottom)",
-        // Safari fixed element stability fixes
-        WebkitTransform: "translate3d(0, 0, 0)",
-        transform: "translate3d(0, 0, 0)",
-        WebkitBackfaceVisibility: "hidden",
-        backfaceVisibility: "hidden",
-      }}
+      ref={indicatorRef}
+      className="md:hidden sticky bottom-0 left-0 right-0 z-40 bg-[var(--bg-primary)] border-t border-[var(--border)]"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       {/* Progress bar */}
       <div className="relative h-[2px]">
@@ -105,9 +86,20 @@ function MobileFooter() {
           <div className="w-2 h-2 -translate-x-1/2 rounded-full bg-[var(--text-primary)]" />
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Footer content */}
-      <div className="flex items-center justify-between px-4 py-2.5">
+// Mobile footer - normal flow
+function MobileFooter() {
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <div className="md:hidden border-t border-[var(--border)] bg-[var(--bg-primary)]">
+      <div
+        className="flex items-center justify-between px-4 py-3"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 12px)" }}
+      >
         <span className="text-[10px] text-[var(--text-muted)]">
           &copy; {currentYear} EOA
         </span>
@@ -161,6 +153,11 @@ function DesktopFooter() {
       </div>
     </footer>
   );
+}
+
+// Export scroll indicator separately so it can be placed inside main content
+export function ScrollIndicator() {
+  return <MobileScrollIndicator />;
 }
 
 export default function Footer() {

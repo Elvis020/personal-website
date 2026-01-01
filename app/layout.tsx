@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import Footer, { ScrollIndicator } from "@/components/layout/Footer";
 import LoadingScreen from "@/components/animations/LoadingScreen";
 import ParticleWrapper from "@/components/three/ParticleWrapper";
 import ThemeProvider from "@/components/providers/ThemeProvider";
@@ -69,8 +69,9 @@ export default function RootLayout({
           <RotatingCursor />
           <MobileShapes />
           <Header />
-          <main className="min-h-screen pb-16 md:pb-0">
+          <main className="min-h-screen">
             {children}
+            <ScrollIndicator />
           </main>
           <Footer />
         </ThemeProvider>
