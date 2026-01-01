@@ -3,21 +3,21 @@
 
 /* Design System - Theme Variables */
 
-/* Light Theme - Warm, easy on eyes */
+/* Light Theme - Warm cream, easy on eyes */
 :root {
-  --bg-primary: #faf9f6;
-  --bg-secondary: #f3f2ef;
-  --bg-tertiary: #e8e6e3;
-  --text-primary: #2c2c2c;
-  --text-secondary: #5c5c5c;
-  --text-muted: #9a9a9a;
-  --accent: #1a1a1a;
-  --border: #e0deda;
+  --bg-primary: #fdf6ed;
+  --bg-secondary: #f8f1e8;
+  --bg-tertiary: #f0e9df;
+  --text-primary: #2c2825;
+  --text-secondary: #5c5550;
+  --text-muted: #9a928a;
+  --accent: #1a1815;
+  --border: #e5ddd3;
 
   /* Theme switcher specific */
-  --switcher-bg: #e8e6e3;
-  --switcher-knob: #2c2c2c;
-  --switcher-icon: #faf9f6;
+  --switcher-bg: #f0e9df;
+  --switcher-knob: #2c2825;
+  --switcher-icon: #fdf6ed;
 
   /* Playful font combination - Friendly & Rounded */
   --font-display: 'Fredoka', system-ui, sans-serif;
