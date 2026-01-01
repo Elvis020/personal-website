@@ -73,8 +73,8 @@ function MobileScrollIndicator() {
     };
   }, [pathname]);
 
-  // Don't render if page isn't scrollable
-  if (!isScrollable) return null;
+  // Don't render if page isn't scrollable or on reads page
+  if (!isScrollable || pathname === "/reads") return null;
 
   return (
     <div
