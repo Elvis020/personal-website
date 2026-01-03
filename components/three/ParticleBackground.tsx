@@ -108,6 +108,7 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     positions[4] = star.position.y + tempVector.current.y;
     positions[5] = star.position.z + tempVector.current.z;
 
+    // Only update GPU buffer when star is active and moving (optimization)
     geometry.attributes.position.needsUpdate = true;
     material.opacity = star.opacity * 0.6; // Increased opacity for more visibility
 
@@ -115,6 +116,8 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     if (star.lifetime >= star.maxLifetime || star.position.x > 15 || star.position.y > 10) {
       star.active = false;
       material.opacity = 0;
+      // Set needsUpdate one last time to clear the star from view
+      geometry.attributes.position.needsUpdate = true;
     }
   });
 

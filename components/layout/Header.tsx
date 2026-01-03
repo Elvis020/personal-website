@@ -67,9 +67,20 @@ function PillsSidebar({ pathname }: { pathname: string }) {
                   />
                 </svg>
 
-                {/* Label - expands on hover with margin */}
+                {/* Label - expands on hover with transform (GPU-accelerated, no reflow) */}
                 <span
-                  className="text-sm font-medium whitespace-nowrap max-w-0 overflow-hidden opacity-0 group-hover:max-w-[100px] group-hover:opacity-100 group-hover:ml-3 transition-all duration-300 ease-out"
+                  className="text-sm font-medium whitespace-nowrap overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out ml-0 group-hover:ml-3"
+                  style={{
+                    transform: "scaleX(0)",
+                    transformOrigin: "left",
+                    transition: "transform 0.3s ease-out, opacity 0.3s ease-out, margin-left 0.3s ease-out",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = "scaleX(1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.transform = "scaleX(0)";
+                  }}
                 >
                   {item.label}
                 </span>
@@ -113,7 +124,6 @@ function FloatingControls({
         /* GPU layer for scroll stability - prevents bounce on iOS */
         transform: "translate3d(0, 0, 0)",
         WebkitTransform: "translate3d(0, 0, 0)",
-        willChange: "transform",
       }}
     >
       <div className="flex items-center gap-[2px] p-1 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-full">

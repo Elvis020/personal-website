@@ -1,8 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import Image from "next/image";
 import FadeIn from "@/components/animations/FadeIn";
 import StaggerChildren, { StaggerItem } from "@/components/animations/StaggerChildren";
 
@@ -52,165 +50,32 @@ const currently = {
 const skillsRow1 = ["Java", "Python", "Scala", "TypeScript", "JavaScript", "Spring Boot", "React", "NextJS"];
 const skillsRow2 = ["PostgreSQL", "MongoDB", "Docker", "Kubernetes", "AWS", "Svelte", "HTML/CSS", "Git"];
 
-interface SpotifyData {
-  isPlaying: boolean;
-  title: string | null;
-  artist?: string;
-  album?: string;
-  albumImageUrl?: string;
-  songUrl?: string;
-}
-
-// Spotify Now Playing Component
-function SpotifyNowPlaying() {
-  const [data, setData] = useState<SpotifyData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchSpotify() {
-      try {
-        const res = await fetch("/api/spotify");
-        if (res.ok) {
-          const json = await res.json();
-          setData(json);
-        }
-      } catch (error) {
-        console.error("Failed to fetch Spotify data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchSpotify();
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchSpotify, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
-    return (
-      <motion.div
-        className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
-        <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] animate-pulse" />
-          <div className="flex-1">
-            <div className="h-3 w-16 bg-[var(--bg-tertiary)] rounded animate-pulse mb-2" />
-            <div className="h-4 w-32 bg-[var(--bg-tertiary)] rounded animate-pulse" />
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  // Fallback if no Spotify data or not configured
-  if (!data || !data.title) {
-    return (
-      <motion.div
-        className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
-        whileHover={{ scale: 1.02, borderColor: "var(--text-muted)" }}
-        transition={{ type: "spring", stiffness: 300, damping: 25 }}
-      >
-        <div className="flex items-start gap-4">
-          <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-lg">
-            🎧
-          </div>
-          <div>
-            <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1">
-              Listening
-            </p>
-            <p className="text-[var(--text-primary)] font-medium">Not playing</p>
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.a
-      href={data.songUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
-      whileHover={{ scale: 1.02, borderColor: "var(--text-muted)" }}
-      transition={{ type: "spring", stiffness: 300, damping: 25 }}
-    >
-      <div className="flex items-start gap-4">
-        {data.albumImageUrl ? (
-          <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
-            <Image
-              src={data.albumImageUrl}
-              alt={data.album || "Album art"}
-              fill
-              className="object-cover"
-            />
-            {data.isPlaying && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                <div className="flex gap-0.5 items-end h-3">
-                  <span className="w-0.5 bg-green-500 animate-bounce" style={{ height: '8px', animationDelay: '0ms' }} />
-                  <span className="w-0.5 bg-green-500 animate-bounce" style={{ height: '12px', animationDelay: '150ms' }} />
-                  <span className="w-0.5 bg-green-500 animate-bounce" style={{ height: '6px', animationDelay: '300ms' }} />
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="w-12 h-12 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-lg flex-shrink-0">
-            🎧
-          </div>
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1 flex items-center gap-2">
-            {data.isPlaying ? (
-              <>
-                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                Now Playing
-              </>
-            ) : (
-              "Recently Played"
-            )}
-          </p>
-          <p className="text-[var(--text-primary)] font-medium truncate">{data.title}</p>
-          <p className="text-[var(--text-secondary)] text-sm truncate">{data.artist}</p>
-        </div>
-      </div>
-    </motion.a>
-  );
-}
-
-// Currently Section - Reading & Listening (Spotify)
+// Currently Section - What I'm Reading
 function CurrentlySection() {
   return (
     <section className="mb-20">
       <FadeIn>
         <h2 className="text-2xl mb-8">Currently</h2>
       </FadeIn>
-      <StaggerChildren className="grid md:grid-cols-2 gap-4">
-        <StaggerItem>
-          <motion.div
-            className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]"
-            whileHover={{ scale: 1.02, borderColor: "var(--text-muted)" }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-lg">
-                📚
-              </div>
-              <div>
-                <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1">
-                  Reading
-                </p>
-                <p className="text-[var(--text-primary)] font-medium">{currently.reading}</p>
-              </div>
+      <FadeIn delay={0.1}>
+        <motion.div
+          className="p-5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)] max-w-md"
+          whileHover={{ scale: 1.02, borderColor: "var(--text-muted)" }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+        >
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-lg bg-[var(--bg-tertiary)] flex items-center justify-center text-lg">
+              📚
             </div>
-          </motion.div>
-        </StaggerItem>
-        <StaggerItem>
-          <SpotifyNowPlaying />
-        </StaggerItem>
-      </StaggerChildren>
+            <div>
+              <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1">
+                Reading
+              </p>
+              <p className="text-[var(--text-primary)] font-medium">{currently.reading}</p>
+            </div>
+          </div>
+        </motion.div>
+      </FadeIn>
     </section>
   );
 }
