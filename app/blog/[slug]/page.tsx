@@ -27,6 +27,8 @@ export async function generateMetadata({ params }: PageProps) {
     return { title: "Post Not Found" };
   }
 
+  const ogUrl = `https://www.elviis.tech/blog/${slug}/opengraph-image`;
+
   return {
     title: `${post.title} | Elvis O. Amoako`,
     description: post.excerpt,
@@ -36,6 +38,20 @@ export async function generateMetadata({ params }: PageProps) {
       type: "article",
       publishedTime: post.date,
       tags: post.tags,
+      images: [
+        {
+          url: ogUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt,
+      images: [ogUrl],
     },
   };
 }

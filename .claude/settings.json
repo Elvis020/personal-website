@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "\"Bash(git status*)\",\n      \"Bash(git add*)\",\n      \"Bash(git commit*)\",\n      \"Bash(git diff*)\",\n      \"Bash(git log*)\",\n      \"Bash(git branch*)\",\n      \"Bash(git checkout*)\",\n      \"Bash(git merge*)\",\n      \"Bash(git fetch*)\",\n      \"Bash(git pull*)\",\n      \"Bash(git stash*)\",\n      \"Bash(git rebase*)\",\n      \"Bash(git reset*)\",\n      \"Bash(git clone*)\""
+    ]
+  }
+}

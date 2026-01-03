@@ -39,11 +39,11 @@ export const metadata: Metadata = {
   authors: [{ name: "EOA" }],
   icons: {
     icon: [
-      { url: "/favicon-light-circular-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-light-circular-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-dark-circular-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-dark-circular-16.png", sizes: "16x16", type: "image/png" },
     ],
     apple: [
-      { url: "/favicon-light-circular-180.png", sizes: "180x180", type: "image/png" },
+      { url: "/favicon-dark-circular-180.png", sizes: "180x180", type: "image/png" },
     ],
     other: [
       { rel: "manifest", url: "/site.webmanifest" },
