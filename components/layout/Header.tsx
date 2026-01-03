@@ -14,7 +14,7 @@ const navItems = [
   { href: "/reads", label: "Reads" },
 ];
 
-// Desktop Pills Sidebar with hover-reveal labels
+// Desktop Pills Sidebar
 function PillsSidebar({ pathname }: { pathname: string }) {
   const icons: Record<string, string> = {
     "/": "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
@@ -33,7 +33,7 @@ function PillsSidebar({ pathname }: { pathname: string }) {
       initial={{ x: -80, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="hidden md:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col items-start gap-2 z-50"
+      className="hidden md:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col items-center gap-2 z-50"
     >
       {navItems.map((item, index) => {
         const isActive = pathname === item.href;
@@ -45,13 +45,16 @@ function PillsSidebar({ pathname }: { pathname: string }) {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 + index * 0.05, duration: 0.4 }}
           >
-            <Link href={item.href} className="group">
-              <div
-                className={`relative flex items-center px-4 py-3 rounded-full border transition-all duration-300 ease-out ${
+            <Link href={item.href}>
+              <motion.div
+                className={`relative px-4 py-3 rounded-full border transition-all ${
                   isActive
                     ? "bg-[var(--text-primary)] text-[var(--bg-primary)] border-transparent"
                     : "bg-[var(--bg-secondary)]/80 backdrop-blur-sm text-[var(--text-muted)] border-[var(--border)] hover:text-[var(--text-primary)] hover:border-[var(--text-muted)]"
                 }`}
+                whileHover={{ scale: 1.1, x: 4 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
               >
                 <svg
                   className="w-5 h-5"
@@ -66,25 +69,7 @@ function PillsSidebar({ pathname }: { pathname: string }) {
                     d={icons[item.href]}
                   />
                 </svg>
-
-                {/* Label - expands on hover with transform (GPU-accelerated, no reflow) */}
-                <span
-                  className="text-sm font-medium whitespace-nowrap overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out ml-0 group-hover:ml-3"
-                  style={{
-                    transform: "scaleX(0)",
-                    transformOrigin: "left",
-                    transition: "transform 0.3s ease-out, opacity 0.3s ease-out, margin-left 0.3s ease-out",
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.transform = "scaleX(1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.transform = "scaleX(0)";
-                  }}
-                >
-                  {item.label}
-                </span>
-              </div>
+              </motion.div>
             </Link>
           </motion.div>
         );
