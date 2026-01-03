@@ -239,7 +239,7 @@ export default function AboutPage() {
               opportunities to be part of something great.
             </p>
             <motion.a
-              href="mailto:hello@example.com"
+              href="spaceyel3@gmail.com"
               className="group relative inline-block px-6 py-3 text-sm font-medium rounded-lg overflow-hidden"
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}

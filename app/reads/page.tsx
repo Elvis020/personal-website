@@ -262,7 +262,8 @@ function CollapsibleWeek({
 export default function ReadsPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [visibleWeeks, setVisibleWeeks] = useState(INITIAL_WEEKS);
-  const [openWeek, setOpenWeek] = useState<string | null>(null);
+  // Keep the first (latest) week open by default
+  const [openWeek, setOpenWeek] = useState<string | null>(weeklyReads[0]?.week ?? null);
 
   const categories = useMemo(() => getCategories(), []);
   const totalReads = getTotalReads();
@@ -280,7 +281,13 @@ export default function ReadsPage() {
   const canLoadMore = visibleWeeks < totalFilteredWeeks;
 
   const handleShowLess = () => {
-    setVisibleWeeks(Math.max(INITIAL_WEEKS, visibleWeeks - LOAD_INCREMENT));
+    const newVisibleWeeks = Math.max(INITIAL_WEEKS, visibleWeeks - LOAD_INCREMENT);
+    setVisibleWeeks(newVisibleWeeks);
+    // If the currently open week is no longer visible, open the first week
+    const newDisplayedWeeks = filteredWeeklyReads.slice(0, newVisibleWeeks);
+    if (openWeek && !newDisplayedWeeks.some((w) => w.week === openWeek)) {
+      setOpenWeek(newDisplayedWeeks[0]?.week ?? null);
+    }
   };
 
   const handleLoadMore = () => {
@@ -330,7 +337,7 @@ export default function ReadsPage() {
               onClick={() => {
                 setActiveCategory(null);
                 setVisibleWeeks(INITIAL_WEEKS);
-                setOpenWeek(null);
+                setOpenWeek(weeklyReads[0]?.week ?? null);
               }}
               className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                 activeCategory === null
@@ -344,11 +351,16 @@ export default function ReadsPage() {
               <button
                 key={category}
                 onClick={() => {
-                  setActiveCategory(
-                    category === activeCategory ? null : category,
-                  );
+                  const newCategory = category === activeCategory ? null : category;
+                  setActiveCategory(newCategory);
                   setVisibleWeeks(INITIAL_WEEKS);
-                  setOpenWeek(null);
+                  // Open first week of filtered results
+                  const filteredWeeks = newCategory
+                    ? weeklyReads.filter((week) =>
+                        week.reads.some((r) => r.category === newCategory),
+                      )
+                    : weeklyReads;
+                  setOpenWeek(filteredWeeks[0]?.week ?? null);
                 }}
                 className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                   activeCategory === category
@@ -379,9 +391,11 @@ export default function ReadsPage() {
                   week={week}
                   activeCategory={activeCategory}
                   isOpen={openWeek === week.week}
-                  onToggle={() =>
-                    setOpenWeek(openWeek === week.week ? null : week.week)
-                  }
+                  onToggle={() => {
+                    // If clicking on the currently open week, do nothing (keep one always open)
+                    if (openWeek === week.week) return;
+                    setOpenWeek(week.week);
+                  }}
                 />
               </motion.div>
             ))}
