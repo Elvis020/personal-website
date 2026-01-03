@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Light mode: Black brackets on white background with circle -->
+
+  <!-- White circle background -->
+  <circle cx="256" cy="256" r="256" fill="white"/>
+
+  <!-- Inner circle for padding effect -->
+  <circle cx="256" cy="256" r="220" fill="white"/>
+
+  <!-- Left bracket { -->
+  <path d="M150 130 L120 130 Q80 130 80 170 L80 230 Q80 256 55 256 Q80 256 80 282 L80 340 Q80 380 120 380 L150 380"
+        stroke="black" stroke-width="24" stroke-linecap="round" fill="none"/>
+
+  <!-- Forward slash / -->
+  <path d="M240 120 L200 390"
+        stroke="black" stroke-width="24" stroke-linecap="round"/>
+
+  <!-- Right bracket } -->
+  <path d="M360 130 L390 130 Q430 130 430 170 L430 230 Q430 256 455 256 Q430 256 430 282 L430 340 Q430 380 390 380 L360 380"
+        stroke="black" stroke-width="24" stroke-linecap="round" fill="none"/>
+
+  <!-- Green triangle accent -->
+  <path d="M310 220 L345 245 L310 270 Z" fill="#22c55e"/>
+</svg>

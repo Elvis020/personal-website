@@ -8,24 +8,28 @@ import ParticleWrapper from "@/components/three/ParticleWrapper";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import RotatingCursor from "@/components/ui/RotatingCursor";
 import MobileShapes from "@/components/ui/MobileShapes";
+import AdaptiveFavicon from "@/components/ui/AdaptiveFavicon";
 
 // Playful font combination - Friendly & Rounded (optimized weights)
 const fredoka = Fredoka({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["400", "600"],
+  display: "swap",
 });
 
 const quicksand = Quicksand({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500"],
+  display: "swap",
 });
 
 const victorMono = Victor_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -33,6 +37,18 @@ export const metadata: Metadata = {
   description: "Personal website of EOA - Developer, creator, and lifelong learner building things for the web.",
   keywords: ["developer", "portfolio", "blog", "projects"],
   authors: [{ name: "EOA" }],
+  icons: {
+    icon: [
+      { url: "/favicon-light-circular-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-light-circular-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/favicon-light-circular-180.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      { rel: "manifest", url: "/site.webmanifest" },
+    ],
+  },
   openGraph: {
     title: "Elvis O. Amoako | Developer & Creator",
     description: "Personal website of Elvis O. Amoako - Developer, creator, and lifelong learner.",
@@ -43,6 +59,7 @@ export const metadata: Metadata = {
     title: "Elvis O. Amoako | Developer & Creator",
     description: "Personal website of EOA - Developer, creator, and lifelong learner.",
   },
+  manifest: "/site.webmanifest",
 };
 
 // Enable safe area insets for notched devices
@@ -61,6 +78,7 @@ export default function RootLayout({
         className={`${fredoka.variable} ${quicksand.variable} ${victorMono.variable} antialiased`}
       >
         <ThemeProvider>
+          <AdaptiveFavicon />
           <LoadingScreen />
           <ParticleWrapper />
           <RotatingCursor />

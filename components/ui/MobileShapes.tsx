@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { useTheme } from "next-themes";
 import { useDeviceCapability } from "@/hooks/useDeviceCapability";
 
@@ -39,7 +39,7 @@ function generateShapes(): FloatingShape[] {
   return shapes;
 }
 
-function Shape({ shape, scrollOpacity }: { shape: FloatingShape; scrollOpacity: MotionValue<number> }) {
+const Shape = memo(function Shape({ shape, scrollOpacity }: { shape: FloatingShape; scrollOpacity: MotionValue<number> }) {
   const baseClasses = "absolute pointer-events-none";
 
   // Multiply scroll-based opacity by shape's base opacity for variation
@@ -154,7 +154,7 @@ function Shape({ shape, scrollOpacity }: { shape: FloatingShape; scrollOpacity: 
     default:
       return null;
   }
-}
+});
 
 export default function MobileShapes() {
   const [shapes, setShapes] = useState<FloatingShape[]>([]);
@@ -166,11 +166,7 @@ export default function MobileShapes() {
   // Track scroll position for opacity changes
   // More subtle in dark mode, more visible in light mode
   const { scrollY } = useScroll();
-  const scrollOpacity = useTransform(
-    scrollY,
-    [0, 250],
-    isDark ? [0.08, 0.02] : [0.15, 0.03]
-  );
+  const scrollOpacity = useTransform(scrollY, [0, 250], isDark ? [0.08, 0.02] : [0.15, 0.03]);
 
   useEffect(() => {
     setMounted(true);

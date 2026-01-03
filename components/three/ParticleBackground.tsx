@@ -27,13 +27,16 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     maxLifetime: 0,
   });
 
+  // Reusable vector for tail calculations to avoid allocations every frame
+  const tempVector = useRef(new THREE.Vector3());
+
   const starColor = isDark ? "#ffffff" : "#78716c"; // Slightly brighter in light mode
 
   const spawnStar = () => {
     const star = starRef.current;
     // Start from bottom-left area
-    const startX = Math.random() * -10 - 5;
-    const startY = Math.random() * -8 - 2;
+    const startX = Math.random() * -6 - 2; // Left side: -8 to -2
+    const startY = Math.random() * -6 - 1; // Bottom: -7 to -1
     const startZ = Math.random() * -5 - 2;
 
     star.position.set(startX, startY, startZ);
@@ -57,14 +60,19 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     return geo;
   }, []);
 
-  // Create material once
+  // Create material once - never recreate
   const material = useMemo(() => {
     return new THREE.LineBasicMaterial({
       color: starColor,
       transparent: true,
       opacity: 0,
     });
-  }, [starColor]);
+  }, []);
+
+  // Update material color when theme changes without recreating material
+  useEffect(() => {
+    material.color.set(starColor);
+  }, [starColor, material]);
 
   useFrame((_, delta) => {
     const star = starRef.current;
@@ -94,10 +102,11 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     positions[1] = star.position.y;
     positions[2] = star.position.z;
 
-    const tailDir = star.velocity.clone().normalize().multiplyScalar(-star.length);
-    positions[3] = star.position.x + tailDir.x;
-    positions[4] = star.position.y + tailDir.y;
-    positions[5] = star.position.z + tailDir.z;
+    // Use temp vector to avoid creating new Vector3 instances every frame
+    tempVector.current.copy(star.velocity).normalize().multiplyScalar(-star.length);
+    positions[3] = star.position.x + tempVector.current.x;
+    positions[4] = star.position.y + tempVector.current.y;
+    positions[5] = star.position.z + tempVector.current.z;
 
     geometry.attributes.position.needsUpdate = true;
     material.opacity = star.opacity * 0.6; // Increased opacity for more visibility
@@ -115,7 +124,7 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
 function ShootingStars({ isDark = true }: { isDark?: boolean }) {
   return (
     <group>
-      {Array(5).fill(null).map((_, i) => (
+      {Array(2).fill(null).map((_, i) => (
         <ShootingStar key={i} isDark={isDark} index={i} />
       ))}
     </group>
@@ -125,7 +134,7 @@ function ShootingStars({ isDark = true }: { isDark?: boolean }) {
 // Ambient particles (slower, floating)
 function AmbientParticles({ count = 50, isDark = true }: { count?: number; isDark?: boolean }) {
   const mesh = useRef<THREE.Points>(null);
-  const particleColor = isDark ? "#444444" : "#a8a29e";
+  const particleColor = isDark ? "#71717a" : "#a8a29e"; // Lighter gray in dark mode
 
   const particles = useMemo(() => {
     const positions = new Float32Array(count * 3);
@@ -165,37 +174,114 @@ function AmbientParticles({ count = 50, isDark = true }: { count?: number; isDar
   );
 }
 
-// Floating 3D geometric shapes
-function FloatingShapes({ isDark = true }: { isDark?: boolean }) {
-  const groupRef = useRef<THREE.Group>(null);
-  const shapeColor = isDark ? "#3d3530" : "#d6d3d1";
+interface MovingShape {
+  position: THREE.Vector3;
+  velocity: number;
+  size: number;
+  active: boolean;
+  rotationSpeed: number;
+  rotation: THREE.Euler;
+}
 
-  useFrame((state) => {
-    if (!groupRef.current) return;
+// Single moving shape
+function MovingShapeInstance({ isDark, index, groupOffset }: { isDark: boolean; index: number; groupOffset: number }) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const shapeRef = useRef<MovingShape>({
+    position: new THREE.Vector3(0, 0, 0),
+    velocity: 0,
+    size: 0,
+    active: false,
+    rotationSpeed: 0,
+    rotation: new THREE.Euler(0, 0, 0),
+  });
+
+  const shapeColor = isDark ? "#52525b" : "#d6d3d1";
+
+  // Hide mesh on mount
+  useEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.scale.setScalar(0);
+    }
+  }, []);
+
+  const spawnShape = () => {
+    const shape = shapeRef.current;
+    // Start from right side with random Y position
+    const startX = Math.random() * 3 + 10;
+    const startY = (Math.random() - 0.5) * 8;
+    const startZ = -8 - Math.random() * 4;
+
+    // Add offset based on position in group (0, 1, or 2)
+    const offsetY = (groupOffset - 1) * 1.5; // -1.5, 0, or 1.5
+    const offsetX = groupOffset * 0.5;
+
+    shape.position.set(startX + offsetX, startY + offsetY, startZ);
+    shape.velocity = 0.02 + Math.random() * 0.01; // Slower movement
+    shape.size = 0.4 + Math.random() * 0.4;
+    shape.rotationSpeed = 0.1 + Math.random() * 0.15;
+    shape.active = true;
+  };
+
+  useFrame((state, delta) => {
+    const shape = shapeRef.current;
+
+    // Spawn shapes less frequently, staggered by group offset
+    if (!shape.active && Math.random() < 0.001 + groupOffset * 0.0002) {
+      spawnShape();
+    }
+
+    if (!shape.active || !meshRef.current) return;
+
+    // Move left
+    shape.position.x -= shape.velocity;
+
+    // Rotate
     const time = state.clock.getElapsedTime();
-    groupRef.current.rotation.y = time * 0.05;
-    groupRef.current.rotation.x = Math.sin(time * 0.1) * 0.1;
+    shape.rotation.y = time * shape.rotationSpeed;
+    shape.rotation.x = Math.sin(time * shape.rotationSpeed * 0.7) * 0.3;
+
+    // Update mesh
+    meshRef.current.position.copy(shape.position);
+    meshRef.current.rotation.copy(shape.rotation);
+    meshRef.current.scale.setScalar(shape.size);
+
+    // Deactivate when too far left
+    if (shape.position.x < -15) {
+      shape.active = false;
+      meshRef.current.scale.setScalar(0);
+    }
   });
 
   return (
-    <group ref={groupRef}>
-      {[...Array(7)].map((_, i) => (
-        <mesh
-          key={i}
-          position={[
-            Math.sin(i * 0.9) * 4,
-            Math.cos(i * 0.9) * 3.5,
-            -5 - i * 0.6,
-          ]}
-        >
-          <octahedronGeometry args={[0.25 + i * 0.05]} />
-          <meshBasicMaterial
-            color={shapeColor}
-            transparent
-            opacity={isDark ? 0.12 : 0.25}
-            wireframe
-          />
-        </mesh>
+    <mesh ref={meshRef}>
+      <octahedronGeometry args={[1]} />
+      <meshBasicMaterial
+        color={shapeColor}
+        transparent
+        opacity={isDark ? 0.25 : 0.25}
+        wireframe
+      />
+    </mesh>
+  );
+}
+
+// Floating 3D geometric shapes - moving right to left in groups of 3
+function FloatingShapes({ isDark = true }: { isDark?: boolean }) {
+  return (
+    <group>
+      {/* Create multiple groups of 3 shapes */}
+      {Array(3).fill(null).map((_, groupIndex) => (
+        <group key={groupIndex}>
+          {/* 3 shapes per group, spaced out */}
+          {Array(3).fill(null).map((_, shapeIndex) => (
+            <MovingShapeInstance
+              key={shapeIndex}
+              isDark={isDark}
+              index={groupIndex * 3 + shapeIndex}
+              groupOffset={shapeIndex}
+            />
+          ))}
+        </group>
       ))}
     </group>
   );

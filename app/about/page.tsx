@@ -8,22 +8,40 @@ import StaggerChildren, { StaggerItem } from "@/components/animations/StaggerChi
 
 const experience = [
   {
-    role: "Software Engineer",
-    company: "Company Name",
-    period: "2023 - Present",
-    description: "Building scalable web applications and leading frontend architecture.",
+    role: "Software Engineer III",
+    company: "turntabl",
+    period: "Dec 2024 - Present",
+    description: "Leading development of critical systems including payroll and attendance monitoring platforms. Mentoring junior developers, conducting code reviews, and driving technical excellence across teams.",
   },
   {
-    role: "Developer",
-    company: "Previous Company",
-    period: "2021 - 2023",
-    description: "Full-stack development with focus on React and Node.js ecosystems.",
+    role: "Software Engineer II",
+    company: "turntabl",
+    period: "Dec 2022 - Dec 2024",
+    description: "Architected and delivered full-stack solutions using Spring Boot, React, and PostgreSQL. Collaborated with cross-functional teams to build scalable, production-ready applications.",
   },
   {
-    role: "Junior Developer",
-    company: "First Company",
-    period: "2019 - 2021",
-    description: "Started my journey building web applications and learning best practices.",
+    role: "Python Tutor",
+    company: "Global Code Programme, turntabl",
+    period: "Aug 2022 - Present",
+    description: "Teaching Python programming fundamentals and advanced concepts including Flask APIs and MQTT protocols. Mentoring students through project ideation, development, and presentation.",
+  },
+  {
+    role: "Junior Software Engineer",
+    company: "turntabl",
+    period: "Jan 2021 - Dec 2022",
+    description: "Began software engineering career working remotely for Morgan Stanley as a contingent worker. Mastered Scala, built Spring Boot microservices, and contributed to backend systems maintenance.",
+  },
+  {
+    role: "Web Developer",
+    company: "Code Coast Training Center (Ghana Tech Lab)",
+    period: "Jun 2020 - Sep 2020",
+    description: "Completed intensive 3-month full-stack bootcamp. Built backend microservices in Node.js and Python, created React frontends, and led UI/UX design for a food delivery app.",
+  },
+  {
+    role: "Teaching Assistant (Physics)",
+    company: "University of Cape Coast",
+    period: "Sep 2019 - Aug 2020",
+    description: "Assisted in evaluating student progress, supervised physics lab work, and tutored students individually and in small groups on complex physics concepts.",
   },
 ];
 
@@ -31,8 +49,8 @@ const currently = {
   reading: "Designing Data-Intensive Applications",
 };
 
-const skillsRow1 = ["TypeScript", "JavaScript", "React", "Next.js", "Node.js", "Python", "Go", "GraphQL"];
-const skillsRow2 = ["Tailwind CSS", "Framer Motion", "PostgreSQL", "Redis", "Docker", "AWS", "Vercel", "Git"];
+const skillsRow1 = ["Java", "Python", "Scala", "TypeScript", "JavaScript", "Spring Boot", "React", "NextJS"];
+const skillsRow2 = ["PostgreSQL", "MongoDB", "Docker", "Kubernetes", "AWS", "Svelte", "HTML/CSS", "Git"];
 
 interface SpotifyData {
   isPlaying: boolean;
@@ -295,9 +313,9 @@ export default function AboutPage() {
 
       <FadeIn delay={0.1}>
         <p className="text-lg text-[var(--text-secondary)] max-w-2xl mb-16 leading-relaxed">
-          I&apos;m a developer passionate about building beautiful, functional, and
-          accessible web experiences. I believe in the power of clean code and
-          thoughtful design.
+          Software Engineer at turntabl, where I lead teams, architect scalable systems,
+          and mentor the next generation of developers. From Engineering Physics to full-stack development,
+          my journey has been driven by curiosity and a passion for solving complex problems.
         </p>
       </FadeIn>
 
@@ -309,16 +327,29 @@ export default function AboutPage() {
         <FadeIn delay={0.1}>
           <div className="prose dark:prose-invert max-w-none">
             <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
-              I started my journey in tech with a curiosity for how things work.
-              That curiosity led me to explore programming, design, and everything
-              in between. Today, I specialize in building modern web applications
-              that prioritize user experience and performance.
+              My journey began with a BSc in Engineering Physics from the University of Cape Coast,
+              where I developed a foundation in problem-solving and analytical thinking. After graduating,
+              I worked as a Teaching Assistant in Physics, which sparked my passion for education—a passion
+              I still pursue today as a Python tutor since 2022.
+            </p>
+            <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
+              The turning point came in 2020 when I enrolled in a 3-month intensive web development bootcamp
+              at Code Coast Training Center (Ghana Tech Lab). There, I was introduced to the full-stack ecosystem—
+              building backend microservices in Node.js and Python, creating frontends with React, and even leading
+              UI/UX design for a food delivery app. That experience ignited my passion for software engineering and
+              set me on a new path.
+            </p>
+            <p className="text-[var(--text-secondary)] leading-relaxed mb-4">
+              In 2021, I joined turntabl as a Junior Software Engineer. Over four years, I&apos;ve grown from
+              writing my first production code to leading critical projects like payroll systems and attendance
+              monitoring platforms. Each promotion—from Junior to Engineer II to Software Engineer III—has been
+              earned through delivering impact and helping others succeed.
             </p>
             <p className="text-[var(--text-secondary)] leading-relaxed">
-              When I&apos;m not coding, you can find me reading about emerging
-              technologies, contributing to open source, or exploring new ideas
-              through side projects. I believe in continuous learning and sharing
-              knowledge with the community.
+              Today, I architect full-stack solutions using Spring Boot, React, and NextJS, while also mentoring
+              junior developers and conducting code reviews. Whether I&apos;m debugging a distributed system,
+              teaching Python concepts, or exploring new technologies, I&apos;m driven by the belief that great
+              software comes from continuous learning and knowledge sharing.
             </p>
           </div>
         </FadeIn>
