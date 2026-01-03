@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 function BlurReveal({
   children,
   delay = 0,
-  baseDelay = 0
+  baseDelay = 0,
 }: {
   children: React.ReactNode;
   delay?: number;
@@ -40,10 +40,18 @@ function useTypewriterScramble(finalText: string, baseDelay: number) {
           const char = finalText[currentIndex];
 
           // 15% chance to make a "mistake" on non-space characters
-          if (char !== " " && char !== "\n" && Math.random() > 0.85 && !mistakes.includes(currentIndex)) {
+          if (
+            char !== " " &&
+            char !== "\n" &&
+            Math.random() > 0.85 &&
+            !mistakes.includes(currentIndex)
+          ) {
             mistakes.push(currentIndex);
             const mistakeIndex = currentIndex; // Capture the index for closure
-            setDisplayText(finalText.slice(0, currentIndex) + chars[Math.floor(Math.random() * chars.length)]);
+            setDisplayText(
+              finalText.slice(0, currentIndex) +
+                chars[Math.floor(Math.random() * chars.length)],
+            );
 
             // Fix the mistake after a short delay
             setTimeout(() => {
@@ -68,7 +76,6 @@ function useTypewriterScramble(finalText: string, baseDelay: number) {
   return displayText;
 }
 
-
 export default function Hero() {
   // Check if this is the first visit (loading screen is showing)
   const [baseDelay] = useState(() => {
@@ -86,7 +93,7 @@ export default function Hero() {
           <div>
             <BlurReveal delay={0.1} baseDelay={baseDelay}>
               <p className="text-sm font-mono text-[var(--text-muted)] mb-4 tracking-widest uppercase">
-                Web Developer & Designer
+                Software Engineer
               </p>
             </BlurReveal>
 
@@ -106,7 +113,9 @@ export default function Hero() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                 </span>
-                <span className="text-sm text-[var(--text-secondary)]">Open to opportunities</span>
+                <span className="text-sm text-[var(--text-secondary)]">
+                  Open to opportunities
+                </span>
               </div>
             </BlurReveal>
           </div>
@@ -115,8 +124,9 @@ export default function Hero() {
           <div>
             <BlurReveal delay={0.5} baseDelay={baseDelay}>
               <p className="text-xl md:text-2xl text-[var(--text-secondary)] leading-relaxed mb-6">
-                Senior software engineer building scalable systems and leading teams.
-                I architect full-stack solutions and mentor developers to achieve their potential.
+                Senior software engineer building scalable systems and leading
+                teams. I architect full-stack solutions and mentor developers to
+                achieve their potential.
               </p>
             </BlurReveal>
 
@@ -124,15 +134,21 @@ export default function Hero() {
               <div className="space-y-4 text-base text-[var(--text-muted)]">
                 <div className="flex items-center gap-3">
                   <span className="text-[var(--text-primary)]">▸</span>
-                  <span>Full-stack: Spring Boot, React, NextJS, PostgreSQL</span>
+                  <span>
+                    Full-stack: Spring Boot, React, NextJS, PostgreSQL
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-[var(--text-primary)]">▸</span>
-                  <span>Leadership: Mentorship, code reviews, team guidance</span>
+                  <span>
+                    Leadership: Mentorship, code reviews, team guidance
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-[var(--text-primary)]">▸</span>
-                  <span>Teaching: Python tutor, sharing knowledge with the community</span>
+                  <span>
+                    Teaching: Python tutor, sharing knowledge with the community
+                  </span>
                 </div>
               </div>
             </BlurReveal>
