@@ -4,33 +4,15 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import FadeIn from "../animations/FadeIn";
 import StaggerChildren, { StaggerItem } from "../animations/StaggerChildren";
-
-// Placeholder projects - these will be replaced with real data
-const projects = [
-  {
-    id: 1,
-    title: "Project One",
-    description: "A brief description of what this project does and the technologies used.",
-    tags: ["Next.js", "TypeScript", "Tailwind"],
-    link: "/projects/project-one",
-  },
-  {
-    id: 2,
-    title: "Project Two",
-    description: "Another amazing project showcasing different skills and capabilities.",
-    tags: ["React", "Node.js", "PostgreSQL"],
-    link: "/projects/project-two",
-  },
-  {
-    id: 3,
-    title: "Project Three",
-    description: "Something creative and innovative that solves a real problem.",
-    tags: ["Python", "ML", "FastAPI"],
-    link: "/projects/project-three",
-  },
-];
+import { getAllProjects } from "@/lib/projects";
 
 export default function FeaturedProjects() {
+  const projects = getAllProjects().slice(0, 3); // Show latest 3 on homepage
+
+  if (projects.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-8 md:py-16">
       <div className="max-w-5xl mx-auto px-6">
@@ -39,7 +21,7 @@ export default function FeaturedProjects() {
           <div className="flex items-center gap-4 mb-8 md:mb-12">
             <div className="h-px flex-1 bg-gradient-to-r from-[var(--border)] to-transparent" />
             <h2 className="text-lg md:text-2xl tracking-tight text-[var(--text-secondary)]">
-              Featured Projects
+              Projects
             </h2>
             <Link
               href="/projects"
@@ -52,21 +34,29 @@ export default function FeaturedProjects() {
 
         <StaggerChildren className="grid md:grid-cols-3 gap-6">
           {projects.map((project) => (
-            <StaggerItem key={project.id}>
+            <StaggerItem key={project.id} className="h-full">
               <motion.article
-                className="group relative p-6 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)] hover:border-[var(--text-muted)] transition-colors"
+                className="group relative h-full rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)] hover:border-[var(--text-primary)]/30 transition-all duration-300 overflow-hidden shadow-sm hover:shadow-md"
                 whileHover={{ y: -4 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
-                <Link href={project.link} className="block">
-                  <h3 className="text-lg font-medium mb-2 group-hover:text-[var(--text-primary)] transition-colors">
+                <a
+                  href={project.demo || project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col h-full p-5"
+                >
+                  <h3 className="text-lg font-medium mb-2 group-hover:text-[var(--text-primary)] transition-colors flex items-center gap-2">
                     {project.title}
+                    <svg className="w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
                   </h3>
                   <p className="text-sm text-[var(--text-secondary)] mb-4 line-clamp-2">
                     {project.description}
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {project.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
                         className="text-xs px-2 py-1 rounded-md bg-[var(--bg-tertiary)] text-[var(--text-secondary)] border border-dashed border-[var(--border)]"
@@ -74,8 +64,13 @@ export default function FeaturedProjects() {
                         {tag}
                       </span>
                     ))}
+                    {project.tags.length > 3 && (
+                      <span className="text-xs px-2 py-1 text-[var(--text-muted)]">
+                        +{project.tags.length - 3}
+                      </span>
+                    )}
                   </div>
-                </Link>
+                </a>
               </motion.article>
             </StaggerItem>
           ))}

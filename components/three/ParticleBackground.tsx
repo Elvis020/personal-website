@@ -27,25 +27,27 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     maxLifetime: 0,
   });
 
-  const starColor = isDark ? "#ffffff" : "#57534e";
+  const starColor = isDark ? "#ffffff" : "#78716c"; // Slightly brighter in light mode
 
   const spawnStar = () => {
     const star = starRef.current;
-    const startX = Math.random() * 10 + 5;
-    const startY = Math.random() * 8 - 2;
+    // Start from bottom-left area
+    const startX = Math.random() * -10 - 5;
+    const startY = Math.random() * -8 - 2;
     const startZ = Math.random() * -5 - 2;
 
     star.position.set(startX, startY, startZ);
 
-    const speed = 0.15 + Math.random() * 0.2;
-    const angle = Math.PI * 0.75 + (Math.random() - 0.5) * 0.3;
+    const speed = 0.12 + Math.random() * 0.15; // Slightly slower for more graceful movement
+    // Angle pointing toward top-right (45 degrees)
+    const angle = Math.PI * 0.25 + (Math.random() - 0.5) * 0.3;
     star.velocity.set(Math.cos(angle) * speed, Math.sin(angle) * speed, 0);
 
-    star.length = 0.8 + Math.random() * 1.2;
+    star.length = 1.5 + Math.random() * 2; // Longer tails for more dramatic effect
     star.opacity = 0;
     star.active = true;
     star.lifetime = 0;
-    star.maxLifetime = 1.5 + Math.random() * 1;
+    star.maxLifetime = 2 + Math.random() * 1.5; // Longer lifetime for smoother animation
   };
 
   // Create geometry once
@@ -67,7 +69,7 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
   useFrame((_, delta) => {
     const star = starRef.current;
 
-    if (!star.active && Math.random() < 0.003 + index * 0.0005) {
+    if (!star.active && Math.random() < 0.002 + index * 0.0003) { // Less frequent spawning
       spawnStar();
     }
 
@@ -76,10 +78,11 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     star.lifetime += delta;
 
     const progress = star.lifetime / star.maxLifetime;
-    if (progress < 0.1) {
-      star.opacity = progress / 0.1;
-    } else if (progress > 0.7) {
-      star.opacity = 1 - (progress - 0.7) / 0.3;
+    // Smoother fade in/out curve
+    if (progress < 0.15) {
+      star.opacity = progress / 0.15;
+    } else if (progress > 0.75) {
+      star.opacity = 1 - (progress - 0.75) / 0.25;
     } else {
       star.opacity = 1;
     }
@@ -97,9 +100,10 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
     positions[5] = star.position.z + tailDir.z;
 
     geometry.attributes.position.needsUpdate = true;
-    material.opacity = star.opacity * 0.4;
+    material.opacity = star.opacity * 0.6; // Increased opacity for more visibility
 
-    if (star.lifetime >= star.maxLifetime || star.position.x < -15 || star.position.y < -10) {
+    // Deactivate when star goes too far right or up
+    if (star.lifetime >= star.maxLifetime || star.position.x > 15 || star.position.y > 10) {
       star.active = false;
       material.opacity = 0;
     }
@@ -111,7 +115,7 @@ function ShootingStar({ isDark, index }: { isDark: boolean; index: number }) {
 function ShootingStars({ isDark = true }: { isDark?: boolean }) {
   return (
     <group>
-      {Array(12).fill(null).map((_, i) => (
+      {Array(5).fill(null).map((_, i) => (
         <ShootingStar key={i} isDark={isDark} index={i} />
       ))}
     </group>
@@ -222,7 +226,7 @@ export default function ParticleBackground() {
   }
 
   return (
-    <div className="fixed inset-0 z-[1] pointer-events-none">
+    <div className="fixed inset-0 z-0 pointer-events-none">
       <Canvas
         camera={{ position: [0, 0, isMobile ? 4 : 5], fov: isMobile ? 70 : 60 }}
         dpr={[1, isMobile ? 1 : 1.5]}

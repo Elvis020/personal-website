@@ -66,7 +66,7 @@ export default function RootLayout({
           <RotatingCursor />
           <MobileShapes />
           <Header />
-          <main className="min-h-screen">
+          <main className="min-h-screen relative z-10">
             {children}
             <ScrollIndicator />
           </main>

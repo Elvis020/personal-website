@@ -5,30 +5,17 @@ import Link from "next/link";
 import FadeIn from "../animations/FadeIn";
 import StaggerChildren, { StaggerItem } from "../animations/StaggerChildren";
 
-// Placeholder posts - will be replaced with real data from MDX
-const posts = [
-  {
-    slug: "getting-started-with-nextjs",
-    title: "Getting Started with Next.js 14",
-    excerpt: "A comprehensive guide to building modern web applications with Next.js App Router.",
-    date: "2025-01-15",
-    readTime: "5 min read",
-  },
-  {
-    slug: "design-engineering",
-    title: "The Art of Design Engineering",
-    excerpt: "Bridging the gap between design and development for better products.",
-    date: "2025-01-10",
-    readTime: "4 min read",
-  },
-  {
-    slug: "building-in-public",
-    title: "Why I Build in Public",
-    excerpt: "Thoughts on transparency, community, and the benefits of sharing your work.",
-    date: "2025-01-05",
-    readTime: "3 min read",
-  },
-];
+interface Post {
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  readTime: string;
+}
+
+interface RecentPostsProps {
+  posts: Post[];
+}
 
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString("en-US", {
@@ -38,7 +25,14 @@ function formatDate(dateString: string) {
   });
 }
 
-export default function RecentPosts() {
+export default function RecentPosts({ posts }: RecentPostsProps) {
+  // Show up to 3 most recent posts
+  const recentPosts = posts.slice(0, 3);
+
+  if (recentPosts.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-8 md:py-16">
       <div className="max-w-5xl mx-auto px-6">
@@ -58,7 +52,7 @@ export default function RecentPosts() {
         </FadeIn>
 
         <StaggerChildren className="space-y-1">
-          {posts.map((post) => (
+          {recentPosts.map((post) => (
             <StaggerItem key={post.slug}>
               <Link href={`/blog/${post.slug}`}>
                 <motion.article

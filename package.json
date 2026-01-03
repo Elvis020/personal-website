@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "convert-blogs": "node scripts/convert-blogs.js"
   },
   "dependencies": {
     "@react-three/fiber": "^9.5.0",

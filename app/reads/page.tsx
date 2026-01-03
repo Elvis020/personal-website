@@ -3,46 +3,16 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import FadeIn from "@/components/animations/FadeIn";
-
-interface Read {
-  id: number;
-  title: string;
-  source: string;
-  url: string;
-  category: string;
-  note?: string;
-}
-
-interface WeeklyReads {
-  week: string;
-  dateRange: string;
-  reads: Read[];
-}
-
-// { id: 1, title: "The Future of React Server Components", source: "react.dev", url: "https://react.dev", category: "Development", note: "Great deep dive into how RSC works under the hood." },
-// { id: 2, title: "Designing for Accessibility: A Practical Guide", source: "a11yproject.com", url: "https://a11yproject.com", category: "Design" },
-// { id: 3, title: "How to Build a Second Brain", source: "fortelabs.com", url: "https://fortelabs.com", category: "Productivity", note: "Changed how I think about note-taking." },
-
-// Placeholder data
-const weeklyReads: WeeklyReads[] = [
-  {
-    week: "Week 1, 2026",
-    dateRange: "Jan 1 - Jan 7",
-    reads: [],
-  },
-];
+import {
+  weeklyReads,
+  getCategories,
+  getCategoryCount,
+  getTotalReads,
+  type WeeklyReads,
+} from "@/lib/reads";
 
 const INITIAL_WEEKS = 4;
 const LOAD_INCREMENT = 4;
-
-// Utilities
-function getCategories(weeks: WeeklyReads[]): string[] {
-  const categories = new Set<string>();
-  weeks.forEach((week) =>
-    week.reads.forEach((read) => categories.add(read.category)),
-  );
-  return Array.from(categories).sort();
-}
 
 // Icons
 const ExternalIcon = () => (
@@ -294,17 +264,8 @@ export default function ReadsPage() {
   const [visibleWeeks, setVisibleWeeks] = useState(INITIAL_WEEKS);
   const [openWeek, setOpenWeek] = useState<string | null>(null);
 
-  const categories = useMemo(() => getCategories(weeklyReads), []);
-  const totalReads = weeklyReads.reduce(
-    (acc, week) => acc + week.reads.length,
-    0,
-  );
-  const categoryCount = (category: string) =>
-    weeklyReads.reduce(
-      (acc, week) =>
-        acc + week.reads.filter((r) => r.category === category).length,
-      0,
-    );
+  const categories = useMemo(() => getCategories(), []);
+  const totalReads = getTotalReads();
 
   const filteredWeeklyReads = activeCategory
     ? weeklyReads.filter((week) =>
@@ -395,7 +356,7 @@ export default function ReadsPage() {
                     : "bg-transparent text-[var(--text-secondary)] border-[var(--border)] hover:border-[var(--text-muted)]"
                 }`}
               >
-                {category} ({categoryCount(category)})
+                {category} ({getCategoryCount(category)})
               </button>
             ))}
           </div>

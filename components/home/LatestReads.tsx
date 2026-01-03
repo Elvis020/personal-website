@@ -4,33 +4,16 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import FadeIn from "../animations/FadeIn";
 import StaggerChildren, { StaggerItem } from "../animations/StaggerChildren";
-
-// Placeholder reads - will be replaced with real data
-const reads = [
-  {
-    id: 1,
-    title: "The Future of Web Development",
-    source: "smashingmagazine.com",
-    url: "https://smashingmagazine.com",
-    category: "Development",
-  },
-  {
-    id: 2,
-    title: "Designing for Accessibility",
-    source: "a11yproject.com",
-    url: "https://a11yproject.com",
-    category: "Design",
-  },
-  {
-    id: 3,
-    title: "Understanding Modern JavaScript",
-    source: "javascript.info",
-    url: "https://javascript.info",
-    category: "Learning",
-  },
-];
+import { getLatestReads } from "@/lib/reads";
 
 export default function LatestReads() {
+  const reads = getLatestReads(3);
+
+  // Don't render section if no reads yet
+  if (reads.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-8 md:py-16">
       <div className="max-w-5xl mx-auto px-6">
