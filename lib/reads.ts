@@ -32,6 +32,14 @@ export const weeklyReads: WeeklyReads[] = [
         category: "Observability",
         note: "High-cardinality structured logging done right",
       },
+      {
+        id: 2,
+        title: "Branded Types in TypeScript: From Structural to Nominal",
+        source: "nanamanu.com",
+        url: "https://nanamanu.com/posts/branded-types-typescript/",
+        category: "TypeScript",
+        note: "Branded types make TypeScript distinguish between structurally identical types at compile time.",
+      },
     ],
   },
 ];
