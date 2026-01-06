@@ -36,6 +36,7 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
   const [markerPos, setMarkerPos] = useState<{ x: number; y: number } | null>(null);
   const animatedProgress = useRef(0);
   const animationRef = useRef<number | undefined>(undefined);
+  const isScrollingProgrammatically = useRef(false);
 
   const activeIndex = headings.findIndex((h) => h.id === activeId);
   const safeActiveIndex = activeIndex >= 0 ? activeIndex : 0;
@@ -166,6 +167,11 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
   // Scroll detection
   useEffect(() => {
     const handleScroll = () => {
+      // Skip scroll detection during programmatic scrolling
+      if (isScrollingProgrammatically.current) {
+        return;
+      }
+
       const scrollPosition = window.scrollY + window.innerHeight;
       const pageHeight = document.documentElement.scrollHeight;
       const isNearBottom = scrollPosition >= pageHeight - 100;
@@ -198,10 +204,22 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
   const handleClick = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
+      // Set flag to prevent scroll detection interference
+      isScrollingProgrammatically.current = true;
+
+      // Immediately update active ID for instant visual feedback
+      setActiveId(id);
+
+      // Perform smooth scroll
       const offset = 100;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
       window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+
+      // Re-enable scroll detection after smooth scroll completes
+      setTimeout(() => {
+        isScrollingProgrammatically.current = false;
+      }, 1000);
     }
   };
 
@@ -288,6 +306,7 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
                 style={{ paddingLeft: `${paddingLeft}px` }}
                 className={`
                   block w-full text-left py-[6px] text-sm leading-[20px] transition-all duration-300
+                  truncate
                   ${heading.level === 3 ? "text-[13px]" : ""}
                   ${isActive
                     ? "text-[var(--text-primary)] font-semibold"

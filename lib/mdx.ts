@@ -99,9 +99,10 @@ export function getPostBySlug(slug: string): BlogPost | null {
 
 /**
  * Extract headings from MDX content for Table of Contents
+ * Only extracts H2 headings for a cleaner TOC
  */
 export function extractHeadings(content: string): TOCHeading[] {
-  const headingRegex = /^(#{2,3})\s+(.+)$/gm;
+  const headingRegex = /^(#{2})\s+(.+)$/gm;
   const headings: TOCHeading[] = [];
   let match;
 

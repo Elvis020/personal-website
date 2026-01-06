@@ -1,0 +1,256 @@
+---
+title: "Building a Smart Job Filter Bot for Remote Work Seekers"
+date: "2026-01-06"
+excerpt: "I'm part of a Telegram group where a friend regularly posts job opportunities in a sub-channel called \"Jobs.\" Every day, new links. New possibilities. New hope."
+tags: ["API","Backend","Development"]
+---
+
+## How It Started: A Simple Frustration
+
+I'm part of a Telegram group where a friend regularly posts job opportunities in a sub-channel called "Jobs." Every day, new links. New possibilities. New hope.
+
+But here's what kept happening:
+
+1. Click link
+2. Read through the entire job description
+3. Get excited about the role
+4. Scroll down to location requirements
+5. See "US-based only" or "Remote (EU timezone required)"
+6. Close tab. Feel frustrated.
+
+This wasn't a one-time thing. It was happening **multiple times a day**. Each click represented wasted time - time I could've spent actually applying to jobs I *could* get, or learning a new skill, or literally anything else.
+
+The worst part? The word "remote" in the job title. It sounds so promising! Until you realize "remote" often means "remote within our specific country/timezone/continent."
+
+One evening, after clicking through yet another "remote" job that turned out to be California-only, I thought: **"There has to be a better way."**
+
+That's when I decided to build **Ghana Jobs Bot** - a Telegram bot that checks if a job is actually accessible from Ghana *before* I waste my time reading it.
+
+## Why This Matters
+
+This problem isn't unique to Ghana. If you're looking for remote work from Africa, South America, Asia, Eastern Europe, or anywhere outside the US/EU/UK, you know this pain. Job boards are filled with "remote" positions that quietly exclude you.
+
+**Ghana Jobs Bot** filters jobs before you waste time reading them.
+
+## What It Does
+
+The bot uses a simple command:
+```
+/check https://careers.company.com/job/12345
+```
+
+And replies with one of four verdicts:
+- ✅ **Helpful** - Worldwide remote or Ghana-based
+- 🌍 **Visa Sponsorship** - Offers relocation support
+- ❌ **Not Helpful** - Location-restricted, excludes Ghana
+- ❓ **Unclear** - Cannot determine requirements
+
+## The Technical Journey
+
+### Stack & Architecture
+
+**Core Technologies:**
+- Python 3.12 + python-telegram-bot
+- Claude AI for intelligent analysis
+- SQLite for caching
+- Fly.io for hosting
+
+I chose Claude AI because it excels at nuanced text analysis - perfect for parsing job requirements where "remote" could mean anything from "worldwide" to "San Francisco office only."
+
+### Architecture Overview
+
+```
+User sends /check command
+    ↓
+Bot scrapes job posting
+    ↓
+Rule-based keyword check
+    ↓
+Still unclear? → Claude AI analysis
+    ↓
+Cache result (24 hours)
+    ↓
+Reply to user
+```
+
+### Challenge #1: URL Detection That Actually Works
+
+**Initial Approach:**
+```python
+JOB_DOMAINS = [
+    'linkedin.com/jobs',
+    'indeed.com',
+    '/jobs/',  # Generic pattern
+]
+```
+
+**The Problem:**
+This missed tons of real job sites! `careers.jackhenry.com/job/...` wouldn't match because I only checked for `/jobs/` (plural), not `/job/` (singular).
+
+**The Solution:**
+Add comprehensive patterns:
+```python
+JOB_DOMAINS = [
+    '/jobs/',      # Plural
+    '/job/',       # Singular
+    '/careers/',   # Path-based
+    'careers.',    # Subdomain
+    'jobs.',       # jobs.company.com
+    'apply.',      # Application portals
+]
+```
+
+This catches 95% of job sites while keeping false positives low.
+
+### Challenge #2: Automatic vs. Manual Operation
+
+**What I Learned the Hard Way:**
+
+I initially built the bot to automatically detect job links in group messages. Seemed smart, right? Wrong.
+
+**Problems:**
+1. **Privacy Mode** - Telegram bots can't see regular messages by default
+2. **Noise** - Bot reacting to every link cluttered the chat
+3. **Unclear intent** - Users didn't know when the bot would activate
+4. **False positives** - Reacting to non-job URLs was annoying
+
+**The Pivot:**
+Switched to **manual commands only**:
+```python
+# Before (automatic)
+application.add_handler(
+    MessageHandler(filters.TEXT, handle_message)
+)
+
+# After (manual)
+application.add_handler(
+    CommandHandler("check", check_command)
+)
+```
+
+This made the bot:
+- More reliable (no privacy mode issues)
+- Less noisy (users control when it activates)
+- Clearer to use (explicit `/check` command)
+- Better UX overall
+
+### Challenge #3: Visa Sponsorship Detection
+
+**The Insight:**
+
+A job that says "US only" but offers visa sponsorship is actually *more valuable* than one with vague requirements. I needed to detect and prioritize these.
+
+**Implementation:**
+```python
+VISA_SPONSORSHIP_KEYWORDS = [
+    r"visa\s+sponsor(?:ship)?",
+    r"h-?1b\s+sponsor(?:ship)?",
+    r"relocation\s+(?:and\s+)?visa",
+    r"immigration\s+support",
+    r"willing\s+to\s+sponsor",
+]
+```
+
+**Detection Priority:**
+1. Check for visa sponsorship **first**
+2. Then check location restrictions
+3. Then check for worldwide remote
+4. Finally, use AI if still unclear
+
+This ensures jobs like "US-based with H-1B sponsorship" get flagged as opportunities, not rejections.
+
+### Challenge #4: Claude AI Integration
+
+**The Smart Fallback:**
+
+When keyword matching fails, Claude AI reads the full job posting:
+
+```python
+prompt = f"""Analyze this job posting for someone in Ghana, Africa.
+
+Determine if they can apply. Answer with ONE of:
+- HELPFUL: Available to Ghana residents
+- VISA_SPONSORSHIP: Offers visa/relocation support
+- NOT_HELPFUL: Restricted, excludes Ghana
+- UNCLEAR: Cannot determine
+
+Consider:
+- "Remote" alone often means US-remote
+- Timezone requirements (Ghana = GMT+0)
+- Visa/work authorization mentions
+
+Job Details:
+{job_content}
+
+Answer in format:
+VERDICT: [HELPFUL/VISA_SPONSORSHIP/NOT_HELPFUL/UNCLEAR]
+REASON: [One sentence explanation]
+"""
+```
+
+This hybrid approach (rules + AI) gives:
+- Fast responses (cached keyword matches)
+- High accuracy (AI handles edge cases)
+- Cost-effective (AI only when needed)
+
+
+## Key Features
+
+- **Smart Caching**: Results are cached for 24 hours, giving instant responses for repeat URLs
+- **Command Menu**: Built-in Telegram commands (`/check`, `/help`, `/clearcache`) visible when users type `/`
+- **Graceful Error Handling**: If scraping fails, the bot falls back to analyzing available text instead of crashing
+
+## Deployment
+
+The bot runs 24/7 on Fly.io's free tier with persistent SQLite storage. Total cost: $0/month.
+
+## Lessons Learned
+
+**Start Simple**: Begin with keyword matching, add complexity only when needed. Each feature solved a real problem.
+
+**Manual > Automatic**: Users want control, not magic that sometimes works. Explicit commands beat auto-detection.
+
+**Detection Order Matters**: Checking visa sponsorship *before* location restrictions changed everything. Logic order shapes user experience.
+
+**Cache Aggressively**: 24-hour caching reduced API calls by 80% without sacrificing accuracy.
+
+**Always Have Fallbacks**: When scraping fails, analyze available text. When AI fails, return "unclear" not an error.
+
+## The Results
+
+The bot delivers instant responses for cached URLs with high accuracy thanks to the keyword + AI combination. Visa sponsorship detection turned out to be a game-changer, revealing opportunities we'd previously dismissed.
+
+Some job sites still have anti-scraping protection, and generic "remote" mentions can be unclear, but the bot handles the vast majority of cases correctly.
+
+## Real-World Impact
+
+What used to take 5-10 minutes per job (reading, getting excited, discovering restrictions) now takes **10 seconds**. That's 30-50x faster.
+
+Group members now focus on jobs they can actually apply to instead of getting demoralized by rejections. My friend filters jobs before sharing, so the channel has higher-quality opportunities. The visa sponsorship detection revealed a whole category of jobs we'd been dismissing.
+
+The bot didn't just save time. It changed how we approach job hunting.
+
+## Try It Yourself
+
+The bot is live! Add it to your Telegram:
+**@ghanajobs_filter_bot**
+
+## Future Improvements
+
+Potential additions include LinkedIn/Indeed API integration, user preference settings, saved searches with notifications, and multi-language support.
+
+## Conclusion
+
+What started as personal frustration turned into a tool that helps my entire Telegram group. The best solutions come from solving your own problems - I built for *me*, frustrated after clicking yet another California-only "remote" job.
+
+If you're building something similar, start with your actual pain point. Don't build what you think people need - build what you know you need, because you've felt that pain multiple times a day.
+
+That Telegram "Jobs" channel that used to frustrate me? Now it's actually useful. And that's worth every line of code.
+
+**Try the bot**: [@ghanajobs_filter_bot](https://t.me/ghanajobs_filter_bot) on Telegram
+
+**Source code**: [github.com/Elvis020/ghana-jobs-filter-bot](https://github.com/Elvis020/ghana-jobs-filter-bot)
+
+Building something similar? Found a bug? I'd love to hear from you. Open an issue or reach out directly.
+
+*Built with curiosity, debugged with patience, deployed with joy. 🚀*

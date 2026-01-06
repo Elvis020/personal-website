@@ -17,12 +17,18 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
   const [progress, setProgress] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const activeButtonRef = useRef<HTMLButtonElement>(null);
+  const isScrollingProgrammatically = useRef(false);
 
   const activeIndex = headings.findIndex((h) => h.id === activeId);
 
   // Scroll detection
   useEffect(() => {
     const handleScroll = () => {
+      // Skip scroll detection during programmatic scrolling
+      if (isScrollingProgrammatically.current) {
+        return;
+      }
+
       const scrollPosition = window.scrollY + window.innerHeight;
       const pageHeight = document.documentElement.scrollHeight;
       const isNearBottom = scrollPosition >= pageHeight - 100;
@@ -78,10 +84,29 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
   const handleClick = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
+      // Set flag to prevent scroll detection interference
+      isScrollingProgrammatically.current = true;
+
+      // Immediately update active ID for instant visual feedback
+      setActiveId(id);
+
+      // Update progress immediately
+      const clickedIndex = headings.findIndex((h) => h.id === id);
+      if (clickedIndex !== -1) {
+        const progressPercent = ((clickedIndex + 1) / headings.length) * 100;
+        setProgress(progressPercent);
+      }
+
+      // Perform smooth scroll
       const offset = 100;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
       window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+
+      // Re-enable scroll detection after smooth scroll completes
+      setTimeout(() => {
+        isScrollingProgrammatically.current = false;
+      }, 1000);
     }
   };
 
@@ -118,7 +143,8 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
               ref={isActive ? activeButtonRef : null}
               onClick={() => handleClick(heading.id)}
               className={`
-                flex-shrink-0 px-3 py-1.5 text-xs rounded-full whitespace-nowrap transition-all duration-200
+                flex-shrink-0 px-3 py-1.5 text-xs rounded-full transition-all duration-200
+                max-w-[200px] truncate
                 ${heading.level === 3 ? "text-[11px]" : ""}
                 ${isActive
                   ? "bg-[var(--text-primary)] text-[var(--bg-primary)] font-medium"
