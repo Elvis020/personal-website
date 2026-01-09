@@ -6,6 +6,7 @@ import Footer, { ScrollIndicator } from "@/components/layout/Footer";
 import LoadingScreen from "@/components/animations/LoadingScreen";
 import ParticleWrapper from "@/components/three/ParticleWrapper";
 import ThemeProvider from "@/components/providers/ThemeProvider";
+import PostHogProvider from "@/components/providers/PostHogProvider";
 import RotatingCursor from "@/components/ui/RotatingCursor";
 import MobileShapes from "@/components/ui/MobileShapes";
 import AdaptiveFavicon from "@/components/ui/AdaptiveFavicon";
@@ -77,19 +78,21 @@ export default function RootLayout({
       <body
         className={`${fredoka.variable} ${quicksand.variable} ${victorMono.variable} antialiased`}
       >
-        <ThemeProvider>
-          <AdaptiveFavicon />
-          <LoadingScreen />
-          <ParticleWrapper />
-          <RotatingCursor />
-          <MobileShapes />
-          <Header />
-          <main className="min-h-screen relative z-10">
-            {children}
-            <ScrollIndicator />
-          </main>
-          <Footer />
-        </ThemeProvider>
+        <PostHogProvider>
+          <ThemeProvider>
+            <AdaptiveFavicon />
+            <LoadingScreen />
+            <ParticleWrapper />
+            <RotatingCursor />
+            <MobileShapes />
+            <Header />
+            <main className="min-h-screen relative z-10">
+              {children}
+              <ScrollIndicator />
+            </main>
+            <Footer />
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
