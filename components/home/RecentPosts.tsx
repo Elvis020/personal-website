@@ -56,21 +56,34 @@ export default function RecentPosts({ posts }: RecentPostsProps) {
             <StaggerItem key={post.slug}>
               <Link href={`/blog/${post.slug}`}>
                 <motion.article
-                  className="group flex items-baseline justify-between py-4 border-b border-[var(--bg-tertiary)] hover:border-[var(--border)] transition-colors"
+                  className="group py-4 border-b border-[var(--bg-tertiary)] hover:border-[var(--border)] transition-colors"
                   whileHover={{ x: 4 }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                  <div className="flex-1">
+                  {/* Mobile: stacked layout */}
+                  <div className="md:hidden">
                     <h3 className="text-base font-medium group-hover:text-[var(--text-primary)] transition-colors">
                       {post.title}
                     </h3>
-                    <p className="text-sm text-[var(--text-muted)] mt-1 hidden md:block">
-                      {post.excerpt}
-                    </p>
+                    <span className="text-xs text-[var(--text-muted)] mt-1 block">
+                      {formatDate(post.date)}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-[var(--text-muted)] ml-4 shrink-0">
-                    <span className="hidden sm:inline">{post.readTime}</span>
-                    <span>{formatDate(post.date)}</span>
+
+                  {/* Desktop: horizontal layout */}
+                  <div className="hidden md:flex md:items-baseline md:justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-base font-medium group-hover:text-[var(--text-primary)] transition-colors">
+                        {post.title}
+                      </h3>
+                      <p className="text-sm text-[var(--text-muted)] mt-1">
+                        {post.excerpt}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-[var(--text-muted)] ml-4 shrink-0">
+                      <span>{post.readTime}</span>
+                      <span>{formatDate(post.date)}</span>
+                    </div>
                   </div>
                 </motion.article>
               </Link>

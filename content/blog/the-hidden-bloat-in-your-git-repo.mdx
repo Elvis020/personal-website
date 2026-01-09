@@ -62,7 +62,17 @@ Output example:
 
 ## The Solution: Rewriting Git History
 
-To actually remove these files from history, you need to use `git filter-branch` or the newer `git filter-repo`:
+To actually remove these files from history, you have several options. Git officially recommends `git filter-repo` as the modern replacement for `filter-branch`.
+
+### Using git filter-repo (Recommended)
+
+```bash
+# Install filter-repo
+pip install git-filter-repo
+
+# Remove specific files from all history
+git filter-repo --path path/to/large/file1 --path path/to/large/file2 --invert-paths
+```
 
 ### Using git filter-branch
 

@@ -200,7 +200,7 @@ export default function BlogPostClient({ content, headings }: BlogPostClientProp
           prose-strong:text-[var(--text-primary)]
           prose-code:text-[var(--text-primary)] prose-code:before:content-none prose-code:after:content-none
           prose-pre:bg-[var(--bg-secondary)] prose-pre:border prose-pre:border-[var(--border)] prose-pre:rounded-lg prose-pre:overflow-x-auto
-          prose-ul:text-[var(--text-secondary)] prose-li:marker:text-[var(--text-muted)]"
+          prose-ul:text-[var(--text-secondary)] prose-ol:text-[var(--text-secondary)] prose-li:marker:text-[var(--text-muted)]"
       >
         <MDXRemote {...mdxSource} components={components} />
       </div>
