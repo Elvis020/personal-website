@@ -2,7 +2,8 @@
 
 import { MDXRemote } from "next-mdx-remote";
 import { serialize } from "next-mdx-remote/serialize";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
+import remarkGfm from "remark-gfm";
 import TableOfContents from "@/components/blog/TableOfContents";
 import MobileTableOfContents from "@/components/blog/MobileTableOfContents";
 
@@ -15,6 +16,57 @@ interface TOCHeading {
 interface BlogPostClientProps {
   content: string;
   headings: TOCHeading[];
+}
+
+// Copy button component for code blocks
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="absolute top-3 right-3 p-2 rounded-md bg-[var(--bg-tertiary)] hover:bg-[var(--border)] transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+      aria-label={copied ? "Copied!" : "Copy code"}
+    >
+      {copied ? (
+        <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      ) : (
+        <svg className="w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        </svg>
+      )}
+    </button>
+  );
+}
+
+// Extract text content from React children
+function extractTextFromChildren(children: ReactNode): string {
+  if (typeof children === "string") return children;
+  if (typeof children === "number") return String(children);
+  if (!children) return "";
+
+  if (Array.isArray(children)) {
+    return children.map(extractTextFromChildren).join("");
+  }
+
+  if (typeof children === "object" && children !== null && "props" in children) {
+    const element = children as React.ReactElement<{ children?: ReactNode }>;
+    return extractTextFromChildren(element.props.children);
+  }
+
+  return "";
 }
 
 // Custom MDX components for styling
@@ -43,11 +95,15 @@ const components = {
       </h3>
     );
   },
-  pre: ({ children, ...props }: React.HTMLAttributes<HTMLPreElement>) => (
-    <pre className="relative group" {...props}>
-      {children}
-    </pre>
-  ),
+  pre: ({ children, ...props }: React.HTMLAttributes<HTMLPreElement>) => {
+    const codeText = extractTextFromChildren(children);
+    return (
+      <pre className="relative group" {...props}>
+        {children}
+        <CopyButton text={codeText} />
+      </pre>
+    );
+  },
   code: ({ children, className, ...props }: React.HTMLAttributes<HTMLElement>) => {
     const isInlineCode = !className;
     if (isInlineCode) {
@@ -63,6 +119,38 @@ const components = {
       </code>
     );
   },
+  table: ({ children, ...props }: React.HTMLAttributes<HTMLTableElement>) => (
+    <div className="overflow-x-auto my-6">
+      <table className="w-full border-collapse text-sm" {...props}>
+        {children}
+      </table>
+    </div>
+  ),
+  thead: ({ children, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => (
+    <thead className="bg-[var(--bg-secondary)]" {...props}>
+      {children}
+    </thead>
+  ),
+  tbody: ({ children, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => (
+    <tbody className="divide-y divide-[var(--border)]" {...props}>
+      {children}
+    </tbody>
+  ),
+  tr: ({ children, ...props }: React.HTMLAttributes<HTMLTableRowElement>) => (
+    <tr className="border-b border-[var(--border)]" {...props}>
+      {children}
+    </tr>
+  ),
+  th: ({ children, ...props }: React.HTMLAttributes<HTMLTableCellElement>) => (
+    <th className="px-4 py-3 text-left font-semibold text-[var(--text-primary)] border border-[var(--border)]" {...props}>
+      {children}
+    </th>
+  ),
+  td: ({ children, ...props }: React.HTMLAttributes<HTMLTableCellElement>) => (
+    <td className="px-4 py-3 text-[var(--text-secondary)] border border-[var(--border)]" {...props}>
+      {children}
+    </td>
+  ),
 };
 
 export default function BlogPostClient({ content, headings }: BlogPostClientProps) {
@@ -81,6 +169,7 @@ export default function BlogPostClient({ content, headings }: BlogPostClientProp
       const serialized = await serialize(content, {
         mdxOptions: {
           development: process.env.NODE_ENV === "development",
+          remarkPlugins: [remarkGfm],
         },
       });
       setMdxSource(serialized);

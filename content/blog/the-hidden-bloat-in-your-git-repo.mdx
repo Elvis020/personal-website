@@ -1,0 +1,177 @@
+---
+title: "The Hidden Bloat in Your Git Repo"
+date: "2026-01-09"
+excerpt: "You've just optimized your video files, compressing them from 350MB down to 65MB. You're feeling great about the performance gains. Then you run `git push` and see this:"
+tags: ["Git"]
+---
+
+## The Problem
+
+You've just optimized your video files, compressing them from 350MB down to 65MB. You're feeling great about the performance gains. Then you run `git push` and see this:
+
+```
+Compressing objects: 100% (57/57), done.
+Writing objects:  81% (56/69), 229.61 MiB | 1.64 MiB/s
+```
+
+Wait, what? 229MB? But your optimized videos are only 65MB total!
+
+## The Root Cause: Git Never Forgets
+
+Here's the thing about Git that catches many developers off guard: **Git stores every version of every file in its history**. When you delete a file, Git doesn't actually remove it - it just marks it as deleted in the current commit while keeping the original blob in the object database.
+
+In my case, I had:
+
+| File | Original Size | Action |
+|------|---------------|--------|
+| video4.mov | 135.5 MB | Deleted after compression |
+| video3.mp4 | 127.6 MB | Deleted after compression |
+| video1.mp4 | 65.9 MB | Deleted after compression |
+| **Total in history** | **329 MB** | Still being pushed! |
+
+Even though I replaced these with optimized versions (totaling ~65MB), Git was still trying to push the original large files because they existed in previous commits.
+
+## How to Find Large Objects in Git History
+
+First, let's identify what's bloating your repository:
+
+```bash
+git rev-list --objects --all | \
+  git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' | \
+  sed -n 's/^blob //p' | \
+  sort -rnk2 | \
+  head -20 | \
+  awk '{printf "%.1f MB  %s\n", $2/1024/1024, $3}'
+```
+
+This command:
+1. Lists all objects in git history
+2. Gets their type, hash, and size
+3. Filters for blobs (files)
+4. Sorts by size (largest first)
+5. Shows the top 20 with human-readable sizes
+
+Output example:
+```
+135.5 MB  public/videos/video4.mov
+127.6 MB  public/videos/video3.mp4
+65.9 MB   public/videos/video1.mp4
+38.5 MB   public/videos/optimized/video3.mp4
+13.0 MB   public/videos/optimized/video4.mp4
+```
+
+## The Solution: Rewriting Git History
+
+To actually remove these files from history, you need to use `git filter-branch` or the newer `git filter-repo`:
+
+### Using git filter-branch
+
+```bash
+# Remove specific files from all commits
+FILTER_BRANCH_SQUELCH_WARNING=1 git filter-branch --force --index-filter \
+  'git rm --cached --ignore-unmatch path/to/large/file1 path/to/large/file2 2>/dev/null || true' \
+  --prune-empty -- --all
+```
+
+```bash
+# Clean up the orphaned objects
+rm -rf .git/refs/original/
+git reflog expire --expire=now --all
+git gc --prune=now --aggressive
+```
+
+### Using BFG Repo Cleaner (Faster Alternative)
+
+```bash
+# Install BFG
+brew install bfg
+
+# Remove files larger than 50MB
+bfg --strip-blobs-bigger-than 50M
+
+# Clean up
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+```
+
+## Results
+
+After cleaning:
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Push size | 229 MB | ~70 MB |
+| .git folder | 250+ MB | 80 MB |
+| Largest file | 135.5 MB | 38.5 MB |
+
+## Prevention: Best Practices
+
+### 1. Use .gitignore for Large Files
+
+```gitignore
+# Ignore uncompressed videos
+*.mov
+*.avi
+/public/videos/raw/
+
+# Only track optimized versions
+!/public/videos/optimized/
+```
+
+### 2. Use Git LFS for Large Files
+
+```bash
+git lfs install
+git lfs track "*.mp4"
+git lfs track "*.mov"
+git add .gitattributes
+```
+
+### 3. Compress Before Committing
+
+Always optimize media files before your first commit:
+
+```bash
+# Compress video for web
+ffmpeg -i input.mp4 \
+  -vcodec h264 \
+  -crf 28 \
+  -preset medium \
+  -profile:v main \
+  -pix_fmt yuv420p \
+  -movflags +faststart \
+  -an \
+  output.mp4
+```
+
+### 4. Check Before Pushing
+
+```bash
+# See what will be pushed
+git diff origin/main --stat
+
+# Check total size of objects to push
+git count-objects -vH
+```
+
+## Key Takeaways
+
+1. **Deleting a file doesn't remove it from Git history** - it's still stored and will be pushed
+2. **Use `git filter-branch` or BFG** to actually remove files from history
+3. **Always run garbage collection** after rewriting history
+4. **Prevent the issue** by using .gitignore, Git LFS, or compressing files before committing
+5. **Check your push size** before pushing to catch issues early
+
+## A Note on Team Repos
+
+The solutions above worked for me because I was **working alone** on a personal project. Rewriting history is straightforward when you're the only contributor.
+
+**If you're on a team**, the reality is harder: there's no clean fix without coordination. Your options are:
+- **Coordinate a rewrite** - Everyone agrees on a time, history gets cleaned, everyone re-clones
+- **Accept the bloat** - If it's already pushed, future pushes are incremental anyway
+- **Prevent future issues** - Set up Git LFS and .gitignore rules going forward
+
+The best solution for teams is usually prevention. Once large files are in shared history, removing them is disruptive.
+
+---
+
+*This issue cost me an hour of debugging on a solo project. Hopefully this saves you the same trouble!*
