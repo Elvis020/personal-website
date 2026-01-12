@@ -52,6 +52,30 @@ export const projects: Project[] = [
     year: "2025",
     status: "Live",
   },
+  {
+    id: 4,
+    title: "Ghana-jobs-filter-bot",
+    description:
+      "A Telegram bot that analyzes job postings to determine if they're accessible to Ghana-based job seekers. Use /check <url> to instantly analyze any job posting for location requirements and visa sponsorship.",
+    tags: ["Python", "Docker", "Telegram"],
+    image: "/projects/kwameobed.png",
+    demo: "https://github.com/Elvis020/ghana-jobs-filter-bot",
+    link: "https://github.com/Elvis020/ghana-jobs-filter-bot",
+    year: "2026",
+    status: "Live",
+  },
+  {
+    id: 5,
+    title: "PapaYaw Ataamle - Stand-Up Comedian",
+    description:
+      "Professional Ghanaian comedian bringing laughs to stages nationwide. Book shows, watch clips, and catch me live on tv and radio.",
+    tags: ["Next.js", "TypeScript", "SEO", "Entertainment"],
+    image: "/projects/kwameobed.png",
+    demo: "https://www.papayawataamle.com/",
+    link: "https://www.papayawataamle.com/",
+    year: "2026",
+    status: "Live",
+  },
 ];
 
 // ============================================
