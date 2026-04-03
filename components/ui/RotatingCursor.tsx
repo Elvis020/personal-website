@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useTheme } from "next-themes";
+import { useDeviceCapability } from "@/hooks/useDeviceCapability";
 
 interface TrailPoint {
   x: number;
@@ -12,8 +13,10 @@ interface TrailPoint {
 
 export default function RotatingCursor() {
   const [mounted, setMounted] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const { resolvedTheme } = useTheme();
+  const { isLowEnd, prefersReducedMotion } = useDeviceCapability();
   const isDark = resolvedTheme === "dark";
   const cursorRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
@@ -44,6 +47,33 @@ export default function RotatingCursor() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!mounted) return;
+
+    const evaluate = () => {
+      const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+      const hasCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+      const isTouchDevice = navigator.maxTouchPoints > 0 || "ontouchstart" in window;
+      const isDesktopWidth = window.innerWidth >= 768;
+
+      setIsEnabled(
+        isDesktopWidth &&
+        hasFinePointer &&
+        !hasCoarsePointer &&
+        !isTouchDevice &&
+        !prefersReducedMotion &&
+        !isLowEnd
+      );
+    };
+
+    evaluate();
+    window.addEventListener("resize", evaluate, { passive: true });
+
+    return () => {
+      window.removeEventListener("resize", evaluate);
+    };
+  }, [mounted, isLowEnd, prefersReducedMotion]);
+
   // Normalize angle to prevent spinning the long way around
   const normalizeAngle = useCallback((angle: number, reference: number) => {
     while (angle - reference > 180) angle -= 360;
@@ -57,7 +87,7 @@ export default function RotatingCursor() {
   }, []);
 
   useEffect(() => {
-    if (!mounted || !cursorRef.current) return;
+    if (!mounted || !isEnabled || !cursorRef.current) return;
 
     const cursor = cursorRef.current;
     const ring = ringRef.current;
@@ -242,19 +272,9 @@ export default function RotatingCursor() {
       document.documentElement.removeEventListener("mouseenter", handleMouseEnter);
       document.getElementById('cursor-hide-styles')?.remove();
     };
-  }, [mounted, lerp, normalizeAngle]);
+  }, [mounted, isEnabled, lerp, normalizeAngle]);
 
-  // Accessibility checks
-  if (typeof window !== "undefined") {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isTouchDevice = navigator.maxTouchPoints > 0 || "ontouchstart" in window;
-
-    if (prefersReducedMotion || isTouchDevice) {
-      return null;
-    }
-  }
-
-  if (!mounted) return null;
+  if (!mounted || !isEnabled) return null;
 
   // Theme-aware colors
   const cursorFill = isDark ? "#ffffff" : "#2c2c2c";

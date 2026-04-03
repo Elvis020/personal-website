@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import { ButtonLink } from "@/components/ui/Button";
 
 // Blur reveal animation wrapper
 function BlurReveal({
@@ -77,11 +78,7 @@ function useTypewriterScramble(finalText: string, baseDelay: number) {
 }
 
 export default function Hero() {
-  // Check if this is the first visit (loading screen is showing)
-  const [baseDelay] = useState(() => {
-    if (typeof window === "undefined") return 2.1;
-    return sessionStorage.getItem("hasLoaded") ? 0 : 2.1;
-  });
+  const baseDelay = 0;
 
   const scrambledName = useTypewriterScramble("Elvis O. Amoako", baseDelay);
 
@@ -120,12 +117,11 @@ export default function Hero() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  <a
+                  <ButtonLink
                     href="/cv/elvis-opoku-amoako-cv.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="View CV PDF in a new tab"
-                    className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-muted)] px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-colors"
                   >
                     View CV
                     <svg
@@ -141,7 +137,7 @@ export default function Hero() {
                         d="M13 7h6m0 0v6m0-6L10 16M5 5h5m-5 0a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-5"
                       />
                     </svg>
-                  </a>
+                  </ButtonLink>
                 </div>
               </div>
             </BlurReveal>

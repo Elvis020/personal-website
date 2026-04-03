@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { ButtonLink } from "@/components/ui/Button";
 import ThemeSwitcher from "@/components/ui/ThemeSwitcher";
 
 const navItems = [
@@ -13,6 +14,43 @@ const navItems = [
   { href: "/blog", label: "Blog" },
   { href: "/reads", label: "Reads" },
 ];
+
+function ViewCvCta({
+  onClick,
+  size = "sm",
+  className,
+}: {
+  onClick?: () => void;
+  size?: "sm" | "md";
+  className?: string;
+}) {
+  return (
+    <ButtonLink
+      href="/cv/elvis-opoku-amoako-cv.pdf"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="View CV PDF in a new tab"
+      size={size}
+      onClick={onClick}
+      className={className}
+    >
+      View CV
+      <svg
+        className="w-3.5 h-3.5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13 7h6m0 0v6m0-6L10 16M5 5h5m-5 0a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-5"
+        />
+      </svg>
+    </ButtonLink>
+  );
+}
 
 // Desktop Pills Sidebar with hover-reveal labels
 function PillsSidebar({ pathname }: { pathname: string }) {
@@ -290,6 +328,27 @@ function MenuOverlay({
                 );
               })}
             </div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{
+                delay: 0.35,
+                duration: 0.4,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              className="mt-10 pt-6 border-t border-[var(--border)]"
+            >
+              <p className="text-[10px] tracking-[0.2em] uppercase text-[var(--text-muted)] mb-3">
+                Quick Link
+              </p>
+              <ViewCvCta
+                onClick={onClose}
+                size="md"
+                className="w-full justify-between text-[var(--text-secondary)] hover:text-[var(--text-primary)] border-[var(--border)] hover:border-[var(--text-muted)]"
+              />
+            </motion.div>
           </nav>
         </motion.div>
       )}
