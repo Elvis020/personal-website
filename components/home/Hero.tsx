@@ -108,14 +108,41 @@ export default function Hero() {
             </BlurReveal>
 
             <BlurReveal delay={0.6} baseDelay={baseDelay}>
-              <div className="flex items-center gap-3">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                </span>
-                <span className="text-sm text-[var(--text-secondary)]">
-                  Open to opportunities
-                </span>
+              <div className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                  </span>
+                  <span className="text-sm text-[var(--text-secondary)]">
+                    Open to opportunities
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <a
+                    href="/cv/elvis-opoku-amoako-cv.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View CV PDF in a new tab"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--text-muted)] px-5 py-2.5 text-sm font-medium whitespace-nowrap transition-colors"
+                  >
+                    View CV
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7h6m0 0v6m0-6L10 16M5 5h5m-5 0a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-5"
+                      />
+                    </svg>
+                  </a>
+                </div>
               </div>
             </BlurReveal>
           </div>
